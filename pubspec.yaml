@@ -53,6 +53,8 @@ dependencies:
   animated_text_kit: ^4.2.2
   lottie: ^3.1.2
   image_picker: ^1.1.1
+  fl_chart: ^0.68.0
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:

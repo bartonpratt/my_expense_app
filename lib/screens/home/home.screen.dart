@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:events_emitter/events_emitter.dart';
 import 'package:ficonsax/ficonsax.dart';
 import 'package:my_expense_app/dao/account_dao.dart';
@@ -18,6 +20,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
+import 'package:fl_chart/fl_chart.dart';
+
 
 String greeting() {
   var hour = DateTime.now().hour;
@@ -248,6 +252,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     ),
+                    Container(
+                      height: 300, // Adjust height as needed
+                      padding: const EdgeInsets.all(16),
+                      child: PieChart(
+                        PieChartData(
+                          sections: _buildChartSections(), // Define chart sections
+                          borderData: FlBorderData(show: false), // Hide chart border
+                        ),
+                      ),
+                    ),
                     _payments.isNotEmpty? ListView.separated(
                       padding:  EdgeInsets.zero,
                       physics: const NeverScrollableScrollPhysics(),
@@ -286,4 +300,39 @@ class _HomeScreenState extends State<HomeScreen> {
           )
     );
   }
+
+  // Method to build chart sections based on expense data
+  List<PieChartSectionData> _buildChartSections() {
+    // Group expenses by category
+    Map<Category, double> categoryExpenses = {};
+    _payments.forEach((payment) {
+      var category = payment.category;
+      if (category != null) {
+        categoryExpenses.update(category, (value) => value + payment.amount, ifAbsent: () => payment.amount);
+      }
+    });
+
+    // Create chart sections based on expense categories
+    List<PieChartSectionData> sections = [];
+    int index = 0;
+    categoryExpenses.forEach((category, amount) {
+      sections.add(
+        PieChartSectionData(
+          value: amount,
+          title: category.name,
+          color: _getChartColor(index), // Get color for each category
+          titleStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+      );
+      index++;
+    });
+
+    return sections;
+  }
+  Color _getChartColor(int index) {
+    // Add your color logic here, for example:
+    List<Color> colors = [Colors.red, Colors.blue, Colors.green, Colors.orange, Colors.purple];
+    return colors[index % colors.length];
+  }
+
 }

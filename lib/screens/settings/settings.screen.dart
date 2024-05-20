@@ -1,5 +1,4 @@
 import 'package:currency_picker/currency_picker.dart';
-import 'package:ficonsax/ficonsax.dart';
 import 'package:my_expense_app/extension.dart';
 import 'package:my_expense_app/helpers/db.helper.dart';
 import 'package:my_expense_app/providers/app_provider.dart';
@@ -7,6 +6,7 @@ import 'package:my_expense_app/widgets/buttons/button.dart';
 import 'package:my_expense_app/widgets/dialog/confirm.modal.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -22,26 +22,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     AppProvider provider = Provider.of<AppProvider>(context);
-    return Scaffold(
+    return Scaffold(appBar: AppBar(title: Text('Settings'),backgroundColor: Theme.of(context).primaryColor,),
         body: Column(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: context.theme.primaryColor,
-              ),
-              height: MediaQuery.of(context).viewPadding.top + 60,
-              padding: EdgeInsets.only(
-                  top:MediaQuery.of(context).viewPadding.top,
-              ),
-              alignment: Alignment.center,
-              child: Row(
-                children: [
-                  IconButton(onPressed: Navigator.of(context).pop, icon: const Icon(IconsaxOutline.arrow_left_2,size: 26,),color: Colors.white,),
-                  const SizedBox(width: 15,),
-                  const Text("Settings", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 20),)
-                ],
-              ),
-            ),
+
             Expanded(
                 child: ListView(
                   padding: EdgeInsets.zero,
