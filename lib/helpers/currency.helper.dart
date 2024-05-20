@@ -3,18 +3,18 @@ import 'package:intl/intl.dart';
 class CurrencyHelper {
   static String format(
       double amount, {
-        String? symbol = "₹",
-        String? name = "INR",
-        String? locale = "en_IN",
+        String? symbol = "\$",
+        String? name = "USD",
+        String? locale = "en_US",
       }) {
-    return NumberFormat('##,##,##,###.####$symbol', locale).format(amount);
+    return NumberFormat.currency(symbol: symbol, name: name, locale: locale).format(amount);
   }
+
   static String formatCompact(double amount, {
-    String? symbol = "₹",
-    String? name = "INR",
-    String? locale = "en_IN",
-  }){
-    return NumberFormat.compact(locale: locale).format(amount)+(symbol ?? "") ;
+    String? symbol = "\$",
+    String? name = "USD",
+    String? locale = "en_US",
+  }) {
+    return NumberFormat.compactCurrency(symbol: symbol, name: name, locale: locale).format(amount);
   }
 }
-

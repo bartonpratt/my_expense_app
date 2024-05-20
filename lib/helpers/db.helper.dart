@@ -41,6 +41,7 @@ void onCreate(Database database,  int version) async {
   }
 }
 
+
 void onUpgrade(Database database, int oldVersion, int version) async {
   for(int index = oldVersion; index < version; index++){
     MigrationCallback callback = migrations[index];
@@ -57,7 +58,7 @@ Future<void> resetDatabase() async {
   await database.insert("accounts", {
     "name": "Cash",
     "icon": Icons.wallet.codePoint,
-    "color": Colors.teal.value,
+    "color": Colors.blue.value,
     "isDefault": 1
   });
 
@@ -69,7 +70,7 @@ Future<void> resetDatabase() async {
     {"name": "Utilities", "icon": Icons.category.codePoint},
     {"name": "Insurance", "icon": Icons.health_and_safety.codePoint},
     {"name": "Medical & Healthcare", "icon": Icons.medical_information.codePoint},
-    {"name": "Saving, Investing, & Debt Payments", "icon": Icons.attach_money.codePoint},
+    {"name": "Savings & Investing", "icon": Icons.attach_money.codePoint},
     {"name": "Personal Spending", "icon": Icons.house.codePoint},
     {"name": "Recreation & Entertainment", "icon": Icons.tv.codePoint},
     {"name": "Miscellaneous", "icon": Icons.library_books_sharp.codePoint},

@@ -17,7 +17,7 @@ import 'package:my_expense_app/widgets/currency.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-// import 'package:rive/rive.dart';
+import 'package:lottie/lottie.dart';
 
 String greeting() {
   var hour = DateTime.now().hour;
@@ -165,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Row(
                           children: [
-                            const Text("Payments", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17)),
+                            const Text("Transactions", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17)),
                             const Expanded(child: SizedBox()),
                             MaterialButton(
                               onPressed: (){
@@ -270,7 +270,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     ):Container(
                       padding: const EdgeInsets.symmetric(vertical: 25),
                       alignment: Alignment.center,
-                      child: const Text("No payments!"),
+                      child: Column(
+                        children: [
+                          SizedBox(width: 200,height: 200,
+                            child: Lottie.network("https://lottie.host/82db2f50-94b0-4e70-bd7d-efa373b23d73/BUtKcXysHb.json"),
+                          ),
+                          const Text("No payments!"),
+                        ],
+                      ),
                     ),
 
                   ],

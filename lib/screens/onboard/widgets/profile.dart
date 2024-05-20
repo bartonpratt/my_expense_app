@@ -51,7 +51,7 @@ class _ProfileWidget extends State<ProfileWidget>{
                   Expanded(flex: 4,
                       child: ListView(
                         children: [
-                          Text("Heyy! \nWelcome to My Expense", style: theme.textTheme.headlineMedium!.apply(color: theme.colorScheme.primary, fontWeightDelta: 2),),
+                          Text("Heyy! \nWelcome to My Expense", style: theme.textTheme.headlineMedium!.apply(color: theme.primaryColor, fontWeightDelta: 2),),
                           const SizedBox(height: 15,),
                           Text("Please enter all details to continue.", style: theme.textTheme.bodyLarge!.apply(color: ColorHelper.darken(theme.textTheme.bodyLarge!.color!), fontWeightDelta: 1),),
                           const SizedBox(height: 30,),
@@ -106,7 +106,7 @@ class _ProfileWidget extends State<ProfileWidget>{
                   AppButton(
                     borderRadius: BorderRadius.circular(100),
                     label: "Continue",
-                    color: theme.colorScheme.primary,
+                    color: theme.primaryColor,
                     isFullWidth: true,
                     size: AppButtonSize.large,
                     onPressed: () async {
