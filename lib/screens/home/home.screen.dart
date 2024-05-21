@@ -302,57 +302,62 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          Container(
-            height: 250, // Adjust height as needed
-            padding: const EdgeInsets.all(16),
-            child: PieChart(
-              PieChartData(
-                pieTouchData: PieTouchData(
-                  touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                    setState(() {
-                      if (!event.isInterestedForInteractions ||
-                          pieTouchResponse == null ||
-                          pieTouchResponse.touchedSection == null) {
-                        touchedIndex = -1;
-                        return;
-                      }
-                      touchedIndex =
-                          pieTouchResponse.touchedSection!.touchedSectionIndex;
-                    });
-                  },
-                ),
-                centerSpaceRadius: 40,
-                sections: _buildChartSections(), // Define chart sections
-                borderData: FlBorderData(show: false), // Hide chart border
-              ),
-            ),
-          ),
+
           _payments.isNotEmpty
-              ? ListView.separated(
-                  padding: EdgeInsets.zero,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, index) {
-                    return PaymentListItem(
-                        payment: _payments[index],
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (builder) => PaymentForm(
-                                    type: _payments[index].type,
-                                    payment: _payments[index],
-                                  )));
-                        });
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Container(
-                      width: double.infinity,
-                      color: Colors.grey.withAlpha(25),
-                      height: 1,
-                      margin: const EdgeInsets.only(left: 75, right: 20),
-                    );
-                  },
-                  itemCount: _payments.length,
-                )
+              ? Column(
+                children: [
+                  Container(
+                    height: 250, // Adjust height as needed
+                    padding: const EdgeInsets.all(16),
+                    child: PieChart(
+                      PieChartData(
+                        pieTouchData: PieTouchData(
+                          touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                            setState(() {
+                              if (!event.isInterestedForInteractions ||
+                                  pieTouchResponse == null ||
+                                  pieTouchResponse.touchedSection == null) {
+                                touchedIndex = -1;
+                                return;
+                              }
+                              touchedIndex =
+                                  pieTouchResponse.touchedSection!.touchedSectionIndex;
+                            });
+                          },
+                        ),
+                        centerSpaceRadius: 40,
+                        sections: _buildChartSections(), // Define chart sections
+                        borderData: FlBorderData(show: false), // Hide chart border
+                      ),
+                    ),
+                  ),
+                  ListView.separated(
+                      padding: EdgeInsets.zero,
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, index) {
+                        return PaymentListItem(
+                            payment: _payments[index],
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (builder) => PaymentForm(
+                                        type: _payments[index].type,
+                                        payment: _payments[index],
+                                      )));
+                            });
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return Container(
+                          width: double.infinity,
+                          color: Colors.grey.withAlpha(25),
+                          height: 1,
+                          margin: const EdgeInsets.only(left: 75, right: 20),
+                        );
+                      },
+                      itemCount: _payments.length,
+                    ),
+                ],
+              )
               : Container(
                   padding: const EdgeInsets.symmetric(vertical: 25),
                   alignment: Alignment.center,

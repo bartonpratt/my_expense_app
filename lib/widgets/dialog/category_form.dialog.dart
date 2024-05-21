@@ -1,3 +1,4 @@
+import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:my_expense_app/dao/category_dao.dart';
 import 'package:my_expense_app/data/icons.dart';
 import 'package:my_expense_app/events.dart';
@@ -7,6 +8,8 @@ import 'package:my_expense_app/widgets/buttons/button.dart';
 import 'package:my_expense_app/widgets/currency.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:cool_dropdown/models/cool_dropdown_item.dart';
+
 typedef Callback = void Function();
 class CategoryForm extends StatefulWidget {
   final Category? category;
@@ -20,7 +23,9 @@ class CategoryForm extends StatefulWidget {
 class _CategoryForm extends State<CategoryForm>{
   final CategoryDao _categoryDao = CategoryDao();
   final TextEditingController _nameController = TextEditingController();
-  Category _category = Category(name: "", icon: Icons.wallet_outlined, color: Colors.pink);
+  Category _category = Category(name: "", icon: Icons.wallet_outlined, color: Colors.pink, type: "CR",);
+  String _type = "Income";
+
 
   @override
   void initState() {
@@ -29,9 +34,11 @@ class _CategoryForm extends State<CategoryForm>{
       _nameController.text = widget.category!.name;
       _category = widget.category??Category(name: "", icon: Icons.wallet_outlined, color: Colors.pink);
     }
+    _type = _category.type == "DR" ? "Expense" : "Income";
   }
 
   void onSave (context) async{
+    _category.type = _type == "Income" ? "CR" : "DR";
     await _categoryDao.upsert(_category);
     if(widget.onSave != null) {
       widget.onSave!();
@@ -119,6 +126,26 @@ class _CategoryForm extends State<CategoryForm>{
                 },
               ),
             ),
+            const SizedBox(height: 20,),
+
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text('Select Type'),
+                CoolDropdown<String>(
+                  dropdownList: [
+                    CoolDropdownItem<String>(value: "Income", label: 'Income'),
+                    CoolDropdownItem<String>(label:"Expense", value: "Expense"),
+                  ],defaultItem: CoolDropdownItem<String>(value: "Income", label: 'Income'),
+                  controller: DropdownController(),
+                  onChange: (String value) {
+                    setState(() {
+                      _type = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+
             const SizedBox(height: 20,),
             //Color picker
             SizedBox(

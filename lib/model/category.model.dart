@@ -7,6 +7,7 @@ class Category {
   Color color;
   double? budget;
   double? expense;
+  String? type;
 
   Category({
     this.id,
@@ -14,7 +15,8 @@ class Category {
     required this.icon,
     required this.color,
     this.budget,
-    this.expense
+    this.expense,
+    this.type,
   });
 
   factory Category.fromJson(Map<String, dynamic> data) => Category(
@@ -24,6 +26,7 @@ class Category {
     color: Color(data["color"]),
     budget: data["budget"] ?? 0,
     expense: data["expense"] ?? 0,
+    type: data["type"], // Include type
   );
 
   Map<String, dynamic> toJson() => {
@@ -32,5 +35,7 @@ class Category {
     "icon": icon.codePoint,
     "color": color.value,
     "budget": budget,
+    "type": type, // Include type
   };
+
 }
