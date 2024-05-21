@@ -11,30 +11,43 @@ class CategoryDao {
     return result;
   }
 
-  Future<List<Category>> find({ bool withSummery = true, DateTimeRange? range }) async {
+  Future<List<Category>> find({bool withSummary = true, DateTimeRange? range}) async {
     final db = await getDBInstance();
 
     List<Map<String, dynamic>> result;
-    if(withSummery){
+    if (withSummary) {
       String fields = [
         "c.id","c.name","c.icon","c.color", "c.budget",
         "SUM(CASE WHEN t.type='DR' AND t.category=c.id THEN t.amount END) as expense"
       ].join(",");
-      DateTime from = range!=null ? range.start : DateTime(DateTime.now().year, DateTime.now().month,1,0,0);
-      DateTime to =  range!=null ? range.end : DateTime.now().add(const Duration(days: 1));
+      DateTime from = range != null ? range.start : DateTime(DateTime.now().year, DateTime.now().month, 1, 0, 0);
+      DateTime to = range != null ? range.end : DateTime.now().add(const Duration(days: 1));
       DateFormat formatter = DateFormat("yyyy-MM-dd HH:mm");
       String sql = "SELECT $fields FROM categories c "
           "LEFT JOIN payments t ON t.category = c.id AND t.datetime BETWEEN DATE('${formatter.format(from)}') AND DATE('${formatter.format(to)}')"
           "GROUP BY c.id ";
       result = await db.rawQuery(sql);
     } else {
-      result = await db.query("categories",);
+      result = await db.query("categories");
     }
     List<Category> categories =[];
     if (result.isNotEmpty) {
       categories = result.map((item) => Category.fromJson(item)).toList();
     }
     return categories;
+  }
+
+  Future<List<Category>> findByType(String type) async {
+    final db = await getDBInstance();
+    List<Map<String, dynamic>> result = await db.query(
+      "categories",
+      where: "type = ?",
+      whereArgs: [type],
+    );
+
+    return result.isNotEmpty
+        ? result.map((item) => Category.fromJson(item)).toList()
+        : [];
   }
 
   Future<int> update(Category category) async {
@@ -45,14 +58,13 @@ class CategoryDao {
     return result;
   }
 
-  Future<int> upsert(Category category) {
-    if(category.id !=null){
+  Future<int> upsert(Category category) async {
+    if (category.id != null) {
       return update(category);
     } else {
       return create(category);
     }
   }
-
 
   Future<int> delete(int id) async {
     final db = await getDBInstance();

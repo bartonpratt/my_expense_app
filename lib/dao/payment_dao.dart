@@ -32,7 +32,7 @@ class PaymentDao {
     }
 
     if (type != null) {
-      where += "AND type='${type == PaymentType.credit ? "DR" : "CR"}' ";
+      where += "AND type='${type == PaymentType.credit ? "CR" : "DR"}' ";
     }
 
     if (account != null) {
@@ -87,7 +87,7 @@ class PaymentDao {
     }
 
     if (type != null) {
-      where += "AND type='${type == PaymentType.credit ? "DR" : "CR"}' ";
+      where += "AND type='${type == PaymentType.credit ? "CR" : "DR"}' ";
     }
 
     if (account != null) {

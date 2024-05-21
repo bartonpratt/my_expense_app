@@ -67,17 +67,16 @@ class _PaymentForm extends State<PaymentForm> {
     });
   }
 
-  loadCategories() {
-    _categoryDao.find().then((value) {
-      setState(() {
-        _categories = value;
-      });
+  Future<void> loadCategories(PaymentType type) async {
+    String categoryType = type == PaymentType.credit ? 'CR' : 'DR';
+    List<Category> categories = await _categoryDao.findByType(categoryType);
+    setState(() {
+      _categories = categories;
     });
   }
-
   void populateState() async {
     await loadAccounts();
-    await loadCategories();
+    await loadCategories(widget.type);
     if (widget.payment != null) {
       setState(() {
         _id = widget.payment!.id;
@@ -98,7 +97,6 @@ class _PaymentForm extends State<PaymentForm> {
       });
     }
   }
-
 
 // Method to handle image selection from gallery
   Future<void> _pickReceiptImage() async {
@@ -122,8 +120,11 @@ class _PaymentForm extends State<PaymentForm> {
             onTap: _toggleReceiptImageVisibility,
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10), // Adjust the border radius as needed
-                border: Border.all(color: Colors.red, width: 2), // Adjust the border color and width as needed
+                borderRadius: BorderRadius.circular(
+                    10), // Adjust the border radius as needed
+                border: Border.all(
+                    color: Colors.red,
+                    width: 2), // Adjust the border color and width as needed
               ),
               padding: EdgeInsets.all(8), // Adjust padding as needed
               child: Text(
@@ -137,7 +138,8 @@ class _PaymentForm extends State<PaymentForm> {
           ),
         if (_showReceiptImage && _receiptImage != null)
           Padding(
-            padding: EdgeInsets.all(8.0), // Adjust padding around the image as needed
+            padding: EdgeInsets.all(
+                8.0), // Adjust padding around the image as needed
             child: SizedBox(
               width: 200, // Adjust width as needed
               height: 200, // Adjust height as needed
@@ -157,14 +159,11 @@ class _PaymentForm extends State<PaymentForm> {
     );
   }
 
-
-
   void _toggleReceiptImageVisibility() {
     setState(() {
       _showReceiptImage = !_showReceiptImage;
     });
   }
-
 
   Future<void> chooseDate(BuildContext context) async {
     DateTime initialDate = _datetime;
@@ -228,7 +227,7 @@ class _PaymentForm extends State<PaymentForm> {
 
     _categoryEventListener = globalEvent.on("category_update", (data) {
       debugPrint("categories are changed");
-      loadCategories();
+      loadCategories(_type);
     });
   }
 
@@ -278,6 +277,7 @@ class _PaymentForm extends State<PaymentForm> {
                             onPressed: () {
                               setState(() {
                                 _type = PaymentType.credit;
+                                loadCategories(_type);
                               });
                             },
                             label: "Income",
@@ -291,6 +291,7 @@ class _PaymentForm extends State<PaymentForm> {
                             onPressed: () {
                               setState(() {
                                 _type = PaymentType.debit;
+                                loadCategories(_type);
                               });
                             },
                             label: "Expense",
@@ -299,7 +300,7 @@ class _PaymentForm extends State<PaymentForm> {
                                 ? AppButtonType.filled
                                 : AppButtonType.outlined,
                             borderRadius: BorderRadius.circular(45),
-                          )
+                          ),
                         ],
                       )),
                   Container(
@@ -356,11 +357,15 @@ class _PaymentForm extends State<PaymentForm> {
                           });
                         },
                       )),
-                  Row(mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                    _buildReceiptImagePicker(),
-                  ],),
-SizedBox(height: 16,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      _buildReceiptImagePicker(),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
                   Container(
                       margin: const EdgeInsets.only(
                           left: 15, right: 15, bottom: 25),
@@ -583,131 +588,114 @@ SizedBox(height: 16,),
                     ),
                   ),
                   Container(
-                    margin:
-                        const EdgeInsets.only(bottom: 25, left: 15, right: 15),
+                    margin: const EdgeInsets.only(bottom: 25, left: 15, right: 15),
                     width: double.infinity,
                     child: Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
-                        children:
-                            List.generate(_categories.length + 1, (index) {
-                          if (_categories.length == index) {
-                            return ConstrainedBox(
-                                constraints: const BoxConstraints(
-                                  minWidth: 0,
-                                ),
-                                child: IntrinsicWidth(
-                                  child: MaterialButton(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary
-                                          .withOpacity(0.1),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(100),
-                                          side: const BorderSide(
-                                              width: 1.5,
-                                              color: Colors.transparent)),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 15, vertical: 0),
-                                      elevation: 0,
-                                      focusElevation: 0,
-                                      hoverElevation: 0,
-                                      highlightElevation: 0,
-                                      disabledElevation: 0,
-                                      onPressed: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (builder) =>
-                                                const CategoryForm());
-                                      },
-                                      child: SizedBox(
-                                        width: double.infinity,
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.add,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
-                                            ),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text("New Category",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium),
-                                          ],
-                                        ),
-                                      )),
-                                ));
-                          }
-                          Category category = _categories[index];
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: List.generate(_categories.length + 1, (index) {
+                        if (_categories.length == index) {
                           return ConstrainedBox(
-                              constraints: const BoxConstraints(
-                                minWidth: 0,
+                            constraints: const BoxConstraints(
+                              minWidth: 0,
+                            ),
+                            child: IntrinsicWidth(
+                              child: MaterialButton(
+                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(100),
+                                  side: const BorderSide(
+                                    width: 1.5,
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                                elevation: 0,
+                                focusElevation: 0,
+                                hoverElevation: 0,
+                                highlightElevation: 0,
+                                disabledElevation: 0,
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (builder) => const CategoryForm(),
+                                  );
+                                },
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.add,
+                                        color: Theme.of(context).colorScheme.primary,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Text(
+                                        "New Category",
+                                        style: Theme.of(context).textTheme.bodyMedium,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                              child: IntrinsicWidth(
-                                  child: MaterialButton(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary
-                                          .withOpacity(0.1),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(100),
-                                          side: BorderSide(
-                                              width: 1.5,
-                                              color:
-                                                  _category?.id == category.id
-                                                      ? Theme.of(context)
-                                                          .colorScheme
-                                                          .primary
-                                                      : Colors.transparent)),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 15, vertical: 0),
-                                      elevation: 0,
-                                      focusElevation: 0,
-                                      hoverElevation: 0,
-                                      highlightElevation: 0,
-                                      disabledElevation: 0,
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      onPressed: () {
-                                        setState(() {
-                                          _category = category;
-                                        });
-                                      },
-                                      onLongPress: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (builder) => CategoryForm(
-                                                  category: category,
-                                                ));
-                                      },
-                                      child: SizedBox(
-                                        width: double.infinity,
-                                        child: Row(
-                                          children: [
-                                            Icon(category.icon,
-                                                color: category.color),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                              category.name,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
-                                        ),
-                                      ))));
-                        })),
+                            ),
+                          );
+                        }
+                        Category category = _categories[index];
+                        return ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            minWidth: 0,
+                          ),
+                          child: IntrinsicWidth(
+                            child: MaterialButton(
+                              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(100),
+                                side: BorderSide(
+                                  width: 1.5,
+                                  color: _category?.id == category.id
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Colors.transparent,
+                                ),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                              elevation: 0,
+                              focusElevation: 0,
+                              hoverElevation: 0,
+                              highlightElevation: 0,
+                              disabledElevation: 0,
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              onPressed: () {
+                                setState(() {
+                                  _category = category;
+                                });
+                              },
+                              onLongPress: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (builder) => CategoryForm(category: category),
+                                );
+                              },
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: Row(
+                                  children: [
+                                    Icon(category.icon, color: category.color),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      category.name,
+                                      style: Theme.of(context).textTheme.bodyMedium,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
                   ),
                   Container(
                     margin:

@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:events_emitter/events_emitter.dart';
 import 'package:ficonsax/ficonsax.dart';
@@ -94,25 +93,25 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _fetchExpenseTransactions() async {
-    List<Payment> trans = await _paymentDao.find(
-        range: _range, category: _category, account: _account);
-    double expense = 0;
-    for (var payment in trans) {
-      if (payment.type == PaymentType.debit) {
-        expense += payment.amount;
-      }
-    }
-
-    // Fetch accounts
-    List<Account> accounts = await _accountDao.find(withSummery: true);
-
-    setState(() {
-      _payments = trans;
-      _expense = expense;
-      _accounts = accounts;
-    });
-  }
+  // void _fetchExpenseTransactions() async {
+  //   List<Payment> trans = await _paymentDao.find(
+  //       range: _range, category: _category, account: _account);
+  //   double expense = 0;
+  //   for (var payment in trans) {
+  //     if (payment.type == PaymentType.debit) {
+  //       expense += payment.amount;
+  //     }
+  //   }
+  //
+  //   // Fetch accounts
+  //   List<Account> accounts = await _accountDao.find(withSummery: true);
+  //
+  //   setState(() {
+  //     _payments = trans;
+  //     _expense = expense;
+  //     _accounts = accounts;
+  //   });
+  // }
 
   @override
   void initState() {
