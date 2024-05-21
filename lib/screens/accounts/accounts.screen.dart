@@ -212,7 +212,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
               );
             }
         ),
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: FloatingActionButton(shape: CircleBorder(),
           heroTag: "account-hero-fab",
           onPressed: (){
             showDialog(context: context, builder: (builder)=>const AccountForm());

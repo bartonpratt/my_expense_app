@@ -1,4 +1,5 @@
 import 'package:cool_dropdown/cool_dropdown.dart';
+import 'package:flutter/painting.dart';
 import 'package:my_expense_app/dao/category_dao.dart';
 import 'package:my_expense_app/data/icons.dart';
 import 'package:my_expense_app/events.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:cool_dropdown/models/cool_dropdown_item.dart';
 
 typedef Callback = void Function();
+
 class CategoryForm extends StatefulWidget {
   final Category? category;
   final Callback? onSave;
@@ -20,89 +22,101 @@ class CategoryForm extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _CategoryForm();
 }
-class _CategoryForm extends State<CategoryForm>{
+
+class _CategoryForm extends State<CategoryForm> {
   final CategoryDao _categoryDao = CategoryDao();
   final TextEditingController _nameController = TextEditingController();
-  Category _category = Category(name: "", icon: Icons.wallet_outlined, color: Colors.pink, type: "CR",);
+  Category _category = Category(
+    name: "",
+    icon: Icons.wallet_outlined,
+    color: Colors.pink,
+    type: "CR",
+  );
   String _type = "Income";
-
 
   @override
   void initState() {
     super.initState();
-    if(widget.category != null){
+    if (widget.category != null) {
       _nameController.text = widget.category!.name;
-      _category = widget.category??Category(name: "", icon: Icons.wallet_outlined, color: Colors.pink);
+      _category = widget.category ??
+          Category(name: "", icon: Icons.wallet_outlined, color: Colors.pink);
     }
     _type = _category.type == "DR" ? "Expense" : "Income";
   }
 
-  void onSave (context) async{
+  void onSave(context) async {
     _category.type = _type == "Income" ? "CR" : "DR";
     await _categoryDao.upsert(_category);
-    if(widget.onSave != null) {
+    if (widget.onSave != null) {
       widget.onSave!();
     }
     Navigator.pop(context);
     globalEvent.emit("category_update");
   }
 
-  void pickIcon(context)async {
-
-  }
+  void pickIcon(context) async {}
   @override
   Widget build(BuildContext context) {
-    return  AlertDialog(
+    return AlertDialog(
       scrollable: true,
       insetPadding: const EdgeInsets.all(10),
-      title: Text(widget.category!=null?"Edit Category":"New Category", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),),
+      title: Text(
+        widget.category != null ? "Edit Category" : "New Category",
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+      ),
       content: SizedBox(
         width: MediaQuery.of(context).size.width,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 15,),
+            const SizedBox(
+              height: 15,
+            ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-
                 Container(
                   height: 50,
                   width: 50,
                   decoration: BoxDecoration(
                       color: _category.color,
-                      borderRadius: BorderRadius.circular(40)
-                  ),
+                      borderRadius: BorderRadius.circular(40)),
                   alignment: Alignment.center,
-                  child: Icon(_category.icon, color: Colors.white,),
+                  child: Icon(
+                    _category.icon,
+                    color: Colors.white,
+                  ),
                 ),
-                const SizedBox(width: 15,),
+                const SizedBox(
+                  width: 15,
+                ),
                 Expanded(
                     child: TextFormField(
-                      initialValue: _category.name,
-                      decoration: InputDecoration(
-                        labelText: 'Name',
-                        hintText: 'Enter Category name',
-                        filled: true,
-                        border: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15)
+                  initialValue: _category.name,
+                  decoration: InputDecoration(
+                      labelText: 'Name',
+                      hintText: 'Enter Category name',
+                      filled: true,
+                      border: UnderlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      onChanged: (String text){
-                        setState(() {
-                          _category.name = text;
-                        });
-                      },
-                    )
-                )
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 15)),
+                  onChanged: (String text) {
+                    setState(() {
+                      _category.name = text;
+                    });
+                  },
+                ))
               ],
             ),
             Container(
               padding: const EdgeInsets.only(top: 20),
               child: TextFormField(
-                initialValue: _category.budget == null ?"":_category.budget.toString(),
+                initialValue:
+                    _category.budget == null ? "" : _category.budget.toString(),
                 keyboardType: TextInputType.number,
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,4}')),
@@ -115,38 +129,55 @@ class _CategoryForm extends State<CategoryForm>{
                   border: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
-                  prefixIcon: Padding(padding: const EdgeInsets.only(left: 15), child: CurrencyText(null, style: TextStyle(fontFamily: context.monoFontFamily))),
-                  prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+                  prefixIcon: Padding(
+                      padding: const EdgeInsets.only(left: 15),
+                      child: CurrencyText(null,
+                          style:
+                              TextStyle(fontFamily: context.monoFontFamily))),
+                  prefixIconConstraints:
+                      const BoxConstraints(minWidth: 40, minHeight: 0),
                 ),
-                onChanged: (String text){
+                onChanged: (String text) {
                   setState(() {
-                    _category.budget = double.parse(text.isEmpty? "0":text);
+                    _category.budget = double.parse(text.isEmpty ? "0" : text);
                   });
                 },
               ),
             ),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
 
-            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text('Select Type'),
                 CoolDropdown<String>(
                   dropdownList: [
                     CoolDropdownItem<String>(value: "Income", label: 'Income'),
-                    CoolDropdownItem<String>(label:"Expense", value: "Expense"),
-                  ],defaultItem: CoolDropdownItem<String>(value: "Income", label: 'Income'),
+                    CoolDropdownItem<String>(
+                        label: "Expense", value: "Expense"),
+                  ],
+                  defaultItem: CoolDropdownItem<String>(
+                      value: "Income", label: 'Income'),
                   controller: DropdownController(),
                   onChange: (String value) {
                     setState(() {
                       _type = value;
                     });
-                  },
+                  }, resultOptions: ResultOptions(openBoxDecoration: BoxDecoration(border: Border.all(color: Colors.blue.withOpacity(0.5),strokeAlign:BorderSide.strokeAlignInside, width: 1,style: BorderStyle.solid),borderRadius: BorderRadius.circular(15))),
+                  dropdownItemOptions: DropdownItemOptions(selectedTextStyle: TextStyle(color: Colors.blue),
+                      selectedBoxDecoration: BoxDecoration(color: Colors.blue.shade50),
+                      textStyle: TextStyle(color: Colors.black)),
                 ),
               ],
             ),
 
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             //Color picker
             SizedBox(
               height: 45,
@@ -154,33 +185,34 @@ class _CategoryForm extends State<CategoryForm>{
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: Colors.primaries.length,
-                  itemBuilder: (BuildContext context, index)=>
-                      Container(
+                  itemBuilder: (BuildContext context, index) => Container(
                         width: 45,
                         height: 45,
-                        padding: const EdgeInsets.symmetric(horizontal: 2.5, vertical: 2.5),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 2.5, vertical: 2.5),
                         child: GestureDetector(
                             onTap: () {
                               setState(() {
                                 _category.color = Colors.primaries[index];
                               });
                             },
-                            child:  Container(
+                            child: Container(
                               decoration: BoxDecoration(
                                   color: Colors.primaries[index],
                                   borderRadius: BorderRadius.circular(40),
                                   border: Border.all(
                                     width: 2,
-                                    color: _category.color.value == Colors.primaries[index].value ? Colors.white: Colors.transparent,
-                                  )
-                              ),
-                            )
-                        ),
-                      )
-
-              ),
+                                    color: _category.color.value ==
+                                            Colors.primaries[index].value
+                                        ? Colors.white
+                                        : Colors.transparent,
+                                  )),
+                            )),
+                      )),
             ),
-            const SizedBox(height: 15,),
+            const SizedBox(
+              height: 15,
+            ),
 
             //Icon picker
             SizedBox(
@@ -189,33 +221,38 @@ class _CategoryForm extends State<CategoryForm>{
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: AppIcons.icons.length,
-                  itemBuilder: (BuildContext context, index)=>Container(
+                  itemBuilder: (BuildContext context, index) => Container(
                       width: 45,
                       height: 45,
-                      padding: const EdgeInsets.symmetric(horizontal: 2.5, vertical: 2.5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 2.5, vertical: 2.5),
                       child: GestureDetector(
                           onTap: () {
                             setState(() {
                               _category.icon = AppIcons.icons[index];
                             });
                           },
-                          child:  Container(
+                          child: Container(
                             height: 50,
                             width: 50,
                             decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(40),
                                 border: Border.all(
-                                    color: _category.icon == AppIcons.icons[index] ? Theme.of(context).colorScheme.primary: Colors.transparent,
-                                    width: 2
-                                )
+                                    color: _category.icon ==
+                                            AppIcons.icons[index]
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Colors.transparent,
+                                    width: 2)),
+                            child: Icon(
+                              AppIcons.icons[index],
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 18,
                             ),
-                            child:Icon(AppIcons.icons[index], color: Theme.of(context).colorScheme.primary, size: 18,),
-                          )
-                      )
-                  )
-
-              ),
+                          )))),
             ),
           ],
         ),
@@ -224,7 +261,7 @@ class _CategoryForm extends State<CategoryForm>{
         AppButton(
           height: 45,
           isFullWidth: true,
-          onPressed: (){
+          onPressed: () {
             onSave(context);
           },
           color: Theme.of(context).colorScheme.primary,
@@ -232,7 +269,5 @@ class _CategoryForm extends State<CategoryForm>{
         )
       ],
     );
-
   }
-
 }

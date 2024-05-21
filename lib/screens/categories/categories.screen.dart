@@ -80,7 +80,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             );
           },
         ),
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: FloatingActionButton(shape: CircleBorder(),
           heroTag: "category-hero-fab",
           onPressed: (){
             showDialog(context: context, builder: (builder)=>const CategoryForm());
