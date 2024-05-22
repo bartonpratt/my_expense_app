@@ -1,5 +1,4 @@
 import 'package:cool_dropdown/cool_dropdown.dart';
-import 'package:flutter/painting.dart';
 import 'package:my_expense_app/dao/category_dao.dart';
 import 'package:my_expense_app/data/icons.dart';
 import 'package:my_expense_app/events.dart';
@@ -10,6 +9,7 @@ import 'package:my_expense_app/widgets/currency.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cool_dropdown/models/cool_dropdown_item.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 typedef Callback = void Function();
 
@@ -53,6 +53,37 @@ class _CategoryForm extends State<CategoryForm> {
     }
     Navigator.pop(context);
     globalEvent.emit("category_update");
+  }
+
+
+  //color picker method
+  void pickColor(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Pick a color'),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: _category.color,
+              onColorChanged: (Color color) {
+                setState(() {
+                  _category.color = color;
+                });
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Got it'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void pickIcon(context) async {}
@@ -153,7 +184,7 @@ class _CategoryForm extends State<CategoryForm> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text('Select Type'),
+                const Text('Select Type'),
                 CoolDropdown<String>(
                   dropdownList: [
                     CoolDropdownItem<String>(value: "Income", label: 'Income'),
@@ -167,10 +198,20 @@ class _CategoryForm extends State<CategoryForm> {
                     setState(() {
                       _type = value;
                     });
-                  }, resultOptions: ResultOptions(openBoxDecoration: BoxDecoration(border: Border.all(color: Colors.blue.withOpacity(0.5),strokeAlign:BorderSide.strokeAlignInside, width: 1,style: BorderStyle.solid),borderRadius: BorderRadius.circular(15))),
-                  dropdownItemOptions: DropdownItemOptions(selectedTextStyle: TextStyle(color: Colors.blue),
-                      selectedBoxDecoration: BoxDecoration(color: Colors.blue.shade50),
-                      textStyle: TextStyle(color: Colors.black)),
+                  },
+                  resultOptions: ResultOptions(
+                      openBoxDecoration: BoxDecoration(
+                          border: Border.all(
+                              color: Colors.blue.withOpacity(0.5),
+                              strokeAlign: BorderSide.strokeAlignInside,
+                              width: 1,
+                              style: BorderStyle.solid),
+                          borderRadius: BorderRadius.circular(15))),
+                  dropdownItemOptions: DropdownItemOptions(
+                      selectedTextStyle: const TextStyle(color: Colors.blue),
+                      selectedBoxDecoration:
+                          BoxDecoration(color: Colors.blue.shade50),
+                      textStyle: const TextStyle(color: Colors.black)),
                 ),
               ],
             ),
@@ -179,36 +220,33 @@ class _CategoryForm extends State<CategoryForm> {
               height: 20,
             ),
             //Color picker
-            SizedBox(
-              height: 45,
-              width: double.infinity,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: Colors.primaries.length,
-                  itemBuilder: (BuildContext context, index) => Container(
-                        width: 45,
-                        height: 45,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 2.5, vertical: 2.5),
-                        child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _category.color = Colors.primaries[index];
-                              });
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.primaries[index],
-                                  borderRadius: BorderRadius.circular(40),
-                                  border: Border.all(
-                                    width: 2,
-                                    color: _category.color.value ==
-                                            Colors.primaries[index].value
-                                        ? Colors.white
-                                        : Colors.transparent,
-                                  )),
-                            )),
-                      )),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                const Text("Pick Color"),
+
+                GestureDetector(
+                  onTap: () => pickColor(context),
+                  child: Container(
+                    padding: const EdgeInsets.all(4.0), // Add space between the outline and the container
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(44), // Increase the border radius slightly for the outer container
+                      border: Border.all(
+                        color: Colors.grey, // Color of the outline
+                        width: 1.0, // Thickness of the outline
+                      ),
+                    ),
+                    child: Container(
+                      height: 40,
+                      width: 200,
+                      decoration: BoxDecoration(
+                        color: _category.color,
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      alignment: Alignment.center,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(
               height: 15,

@@ -93,7 +93,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
             },
           ),
         ),
-        floatingActionButton: FloatingActionButton(shape: CircleBorder(),
+        floatingActionButton: FloatingActionButton(shape: const CircleBorder(),
           heroTag: "payment-hero-fab",
           onPressed: (){
             Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>const PaymentForm(type: PaymentType.credit)));

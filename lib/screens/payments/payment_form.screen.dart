@@ -126,10 +126,10 @@ class _PaymentForm extends State<PaymentForm> {
                     color: Colors.red,
                     width: 2), // Adjust the border color and width as needed
               ),
-              padding: EdgeInsets.all(8), // Adjust padding as needed
+              padding: const EdgeInsets.all(8), // Adjust padding as needed
               child: Text(
                 _showReceiptImage ? 'Hide Receipt Image' : 'Show Receipt Image',
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black, // Adjust text color as needed
                   fontWeight: FontWeight.bold, // Adjust text style as needed
                 ),
@@ -138,7 +138,7 @@ class _PaymentForm extends State<PaymentForm> {
           ),
         if (_showReceiptImage && _receiptImage != null)
           Padding(
-            padding: EdgeInsets.all(
+            padding: const EdgeInsets.all(
                 8.0), // Adjust padding around the image as needed
             child: SizedBox(
               width: 200, // Adjust width as needed
@@ -363,7 +363,7 @@ class _PaymentForm extends State<PaymentForm> {
                       _buildReceiptImagePicker(),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   Container(
