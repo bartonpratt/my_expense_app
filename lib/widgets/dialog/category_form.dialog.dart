@@ -9,7 +9,7 @@ import 'package:my_expense_app/widgets/currency.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cool_dropdown/models/cool_dropdown_item.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:my_expense_app/helpers/color_picker.helper.dart';
 
 typedef Callback = void Function();
 
@@ -55,36 +55,6 @@ class _CategoryForm extends State<CategoryForm> {
     globalEvent.emit("category_update");
   }
 
-
-  //color picker method
-  void pickColor(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Pick a color'),
-          content: SingleChildScrollView(
-            child: ColorPicker(
-              pickerColor: _category.color,
-              onColorChanged: (Color color) {
-                setState(() {
-                  _category.color = color;
-                });
-              },
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Got it'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   void pickIcon(context) async {}
   @override
@@ -225,7 +195,13 @@ class _CategoryForm extends State<CategoryForm> {
                 const Text("Pick Color"),
 
                 GestureDetector(
-                  onTap: () => pickColor(context),
+                  onTap: () {
+                    ColorPickerHelper.pickColor(context, _category.color, (Color color) {
+                      setState(() {
+                        _category.color = color;
+                      });
+                    });
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(4.0), // Add space between the outline and the container
                     decoration: BoxDecoration(
