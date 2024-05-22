@@ -11,8 +11,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'My Expense App',
       theme: ThemeData(
-        primaryColor: Colors.blue,
-
+        primarySwatch: Colors.blue
       ),
       home: const MainScreen(),
       localizationsDelegates: const [

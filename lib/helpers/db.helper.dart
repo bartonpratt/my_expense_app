@@ -12,14 +12,14 @@ Future<Database> getDBInstance() async {
     if (Platform.isWindows) {
       sqfliteFfiInit();
       var databaseFactory = databaseFactoryFfi;
-      db = await databaseFactory.openDatabase("database.db", options: OpenDatabaseOptions(
+      db = await databaseFactory.openDatabase("myexpense.db", options: OpenDatabaseOptions(
         version: 1,
         onCreate: onCreate,
         onUpgrade: onUpgrade,
       ));
     } else {
       String databasesPath = await getDatabasesPath();
-      String dbPath = join(databasesPath, 'database.db');
+      String dbPath = join(databasesPath, 'myexpense.db');
       db = await openDatabase(dbPath, version: 1, onCreate: onCreate, onUpgrade: onUpgrade);
     }
 

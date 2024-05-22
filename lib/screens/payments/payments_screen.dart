@@ -3,7 +3,6 @@ import 'package:my_expense_app/dao/payment_dao.dart';
 import 'package:my_expense_app/events.dart';
 import 'package:my_expense_app/model/payment.model.dart';
 import 'package:my_expense_app/screens/home/widgets/payment_list_item.dart';
-// import 'package:my_expense_app/screens/payments/payment_form.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:my_expense_app/screens/payments/payment_form.screen.dart';
 
@@ -21,10 +20,8 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
   int _count = 0;
   final int limit = 20;
 
-
-
   void loadMore() async {
-    if(_count > _payments.length || _payments.isEmpty) {
+    if (_count > _payments.length || _payments.isEmpty) {
       List<Payment> payments = await _paymentDao.find(
           limit: 20, offset: _payments.length);
       int count = await _paymentDao.count();
@@ -32,8 +29,11 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
         _count = count;
         _payments.addAll(payments);
       });
-    } else{
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("No more transactions"), duration: Duration(seconds: 1),));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("No more transactions"),
+        duration: Duration(seconds: 1),
+      ));
     }
   }
 
@@ -42,8 +42,8 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
     loadMore();
     _paymentEventListener = globalEvent.on("payment_update", (data) async {
       List<Payment> payments = await _paymentDao.find(
-          limit: _payments.length > limit ? _payments.length: limit,
-          offset: 0
+        limit: _payments.length > limit ? _payments.length : limit,
+        offset: 0,
       );
       int count = await _paymentDao.count();
       setState(() {
@@ -60,46 +60,73 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
     _paymentEventListener?.cancel();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Payments", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),),
+      appBar: AppBar(
+        title: const Text(
+          "Payments",
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
         ),
-        body: RefreshIndicator(
-          onRefresh: ()async{
-            setState(() {
-              _count = 0;
-              _payments = [];
-            });
-            return loadMore();
-          },
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-            itemCount: _payments.length,
-            itemBuilder: (BuildContext context, index){
-              return PaymentListItem(payment: _payments[index], onTap: (){
-                Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>PaymentForm(type: _payments[index].type, payment: _payments[index],)));
-              });
-
-            },
-            separatorBuilder: (BuildContext context, int index){
-              return Container(
-                width: double.infinity,
-                color: Colors.grey.withAlpha(25),
-                height: 1,
-                margin: const EdgeInsets.only(left: 75, right: 20),
-              );
-            },
+      ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {
+            _count = 0;
+            _payments = [];
+          });
+          return loadMore();
+        },
+        child: _payments.isEmpty
+            ?  Center(
+          child: Column(
+            children: [
+              SizedBox(
+                width: 200,
+                height: 200,
+                child: Image.asset("assets/images/emptyfile.png"),
+              ),
+              const Text("No payments!"),
+            ],
           ),
-        ),
-        floatingActionButton: FloatingActionButton(shape: const CircleBorder(),
-          heroTag: "payment-hero-fab",
-          onPressed: (){
-            Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>const PaymentForm(type: PaymentType.credit)));
-          },
-          child: const Icon(Icons.add),
         )
+            : ListView.separated(
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+          itemCount: _payments.length,
+          itemBuilder: (BuildContext context, index) {
+            return PaymentListItem(
+              payment: _payments[index],
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (builder) => PaymentForm(
+                    type: _payments[index].type,
+                    payment: _payments[index],
+                  ),
+                ));
+              },
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return Container(
+              width: double.infinity,
+              color: Colors.grey.withAlpha(25),
+              height: 1,
+              margin: const EdgeInsets.only(left: 75, right: 20),
+            );
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        shape: const CircleBorder(),
+        heroTag: "payment-hero-fab",
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (builder) => const PaymentForm(type: PaymentType.credit),
+          ));
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
