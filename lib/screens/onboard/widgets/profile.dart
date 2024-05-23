@@ -1,9 +1,9 @@
 import 'package:currency_picker/currency_picker.dart';
 import 'package:ficonsax/ficonsax.dart';
-import 'package:my_expense_app/helpers/color.helper.dart';
-import 'package:my_expense_app/helpers/db.helper.dart';
-import 'package:my_expense_app/providers/app_provider.dart';
-import 'package:my_expense_app/widgets/buttons/button.dart';
+import 'package:penniverse/helpers/color.helper.dart';
+import 'package:penniverse/helpers/db.helper.dart';
+import 'package:penniverse/providers/app_provider.dart';
+import 'package:penniverse/widgets/buttons/button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

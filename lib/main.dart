@@ -1,6 +1,6 @@
-import 'package:my_expense_app/app.dart';
-import 'package:my_expense_app/helpers/db.helper.dart';
-import 'package:my_expense_app/providers/app_provider.dart';
+import 'package:penniverse/app.dart';
+import 'package:penniverse/helpers/db.helper.dart';
+import 'package:penniverse/providers/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

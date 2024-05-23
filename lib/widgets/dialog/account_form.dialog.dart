@@ -1,12 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:my_expense_app/dao/account_dao.dart';
-import 'package:my_expense_app/events.dart';
-import 'package:my_expense_app/model/account.model.dart';
-import 'package:my_expense_app/widgets/buttons/button.dart';
+import 'package:penniverse/dao/account_dao.dart';
+import 'package:penniverse/events.dart';
+import 'package:penniverse/model/account.model.dart';
+import 'package:penniverse/widgets/buttons/button.dart';
 import 'package:flutter/material.dart';
-import 'package:my_expense_app/data/icons.dart';
-import 'package:my_expense_app/helpers/color_picker.helper.dart';
+import 'package:penniverse/data/icons.dart';
+import 'package:penniverse/helpers/color_picker.helper.dart';
 
 typedef Callback = void Function();
 

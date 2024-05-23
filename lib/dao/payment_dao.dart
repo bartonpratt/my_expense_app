@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'package:my_expense_app/dao/account_dao.dart';
-import 'package:my_expense_app/dao/category_dao.dart';
-import 'package:my_expense_app/helpers/db.helper.dart';
-import 'package:my_expense_app/model/account.model.dart';
-import 'package:my_expense_app/model/category.model.dart';
-import 'package:my_expense_app/model/payment.model.dart';
+import 'package:penniverse/dao/account_dao.dart';
+import 'package:penniverse/dao/category_dao.dart';
+import 'package:penniverse/helpers/db.helper.dart';
+import 'package:penniverse/model/account.model.dart';
+import 'package:penniverse/model/category.model.dart';
+import 'package:penniverse/model/payment.model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

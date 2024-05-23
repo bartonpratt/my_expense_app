@@ -1,4 +1,4 @@
-package com.barton.my_expense_app
+package com.barton.penniverse
 
 import io.flutter.embedding.android.FlutterActivity
 

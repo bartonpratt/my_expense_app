@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:my_expense_app/helpers/migrations/migrations.dart';
+import 'package:penniverse/helpers/migrations/migrations.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 Database? database;

@@ -1,5 +1,5 @@
-import 'package:my_expense_app/screens/onboard/widgets/intro.dart';
-import 'package:my_expense_app/screens/onboard/widgets/profile.dart';
+import 'package:penniverse/screens/onboard/widgets/intro.dart';
+import 'package:penniverse/screens/onboard/widgets/profile.dart';
 import 'package:flutter/material.dart';
 
 

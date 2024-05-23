@@ -1,5 +1,5 @@
-import 'package:my_expense_app/theme/colors.dart';
-import 'package:my_expense_app/widgets/buttons/button.dart';
+import 'package:penniverse/theme/colors.dart';
+import 'package:penniverse/widgets/buttons/button.dart';
 import 'package:flutter/material.dart';
 
 class ConfirmModal extends StatelessWidget{

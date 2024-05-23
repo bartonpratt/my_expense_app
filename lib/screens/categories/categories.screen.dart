@@ -1,8 +1,8 @@
 import 'package:events_emitter/events_emitter.dart';
-import 'package:my_expense_app/dao/category_dao.dart';
-import 'package:my_expense_app/events.dart';
-import 'package:my_expense_app/model/category.model.dart';
-import 'package:my_expense_app/widgets/dialog/category_form.dialog.dart';
+import 'package:penniverse/dao/category_dao.dart';
+import 'package:penniverse/events.dart';
+import 'package:penniverse/model/category.model.dart';
+import 'package:penniverse/widgets/dialog/category_form.dialog.dart';
 import 'package:flutter/material.dart';
 
 

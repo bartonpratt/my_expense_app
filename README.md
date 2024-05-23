@@ -1,4 +1,4 @@
-# my_expense_app
+# penniverse
 
 A new Flutter project.
 

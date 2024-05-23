@@ -1,7 +1,7 @@
 //payment.model.dart page
 import 'dart:io';
-import 'package:my_expense_app/model/account.model.dart';
-import 'package:my_expense_app/model/category.model.dart';
+import 'package:penniverse/model/account.model.dart';
+import 'package:penniverse/model/category.model.dart';
 import 'package:intl/intl.dart';
 
 enum PaymentType {

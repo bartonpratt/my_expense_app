@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:my_expense_app/helpers/db.helper.dart';
-import 'package:my_expense_app/model/category.model.dart';
+import 'package:penniverse/helpers/db.helper.dart';
+import 'package:penniverse/model/category.model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

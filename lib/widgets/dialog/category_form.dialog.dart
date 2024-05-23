@@ -1,15 +1,15 @@
 import 'package:cool_dropdown/cool_dropdown.dart';
-import 'package:my_expense_app/dao/category_dao.dart';
-import 'package:my_expense_app/data/icons.dart';
-import 'package:my_expense_app/events.dart';
-import 'package:my_expense_app/extension.dart';
-import 'package:my_expense_app/model/category.model.dart';
-import 'package:my_expense_app/widgets/buttons/button.dart';
-import 'package:my_expense_app/widgets/currency.dart';
+import 'package:penniverse/dao/category_dao.dart';
+import 'package:penniverse/data/icons.dart';
+import 'package:penniverse/events.dart';
+import 'package:penniverse/extension.dart';
+import 'package:penniverse/model/category.model.dart';
+import 'package:penniverse/widgets/buttons/button.dart';
+import 'package:penniverse/widgets/currency.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cool_dropdown/models/cool_dropdown_item.dart';
-import 'package:my_expense_app/helpers/color_picker.helper.dart';
+import 'package:penniverse/helpers/color_picker.helper.dart';
 
 typedef Callback = void Function();
 

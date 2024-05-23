@@ -1,12 +1,12 @@
 import 'package:ficonsax/ficonsax.dart';
-import 'package:my_expense_app/extension.dart';
-import 'package:my_expense_app/providers/app_provider.dart';
-import 'package:my_expense_app/screens/accounts/accounts.screen.dart';
-import 'package:my_expense_app/screens/categories/categories.screen.dart';
-import 'package:my_expense_app/screens/home/home.screen.dart';
-import 'package:my_expense_app/screens/onboard/onboard_screen.dart';
-import 'package:my_expense_app/screens/payments/payments_screen.dart';
-import 'package:my_expense_app/screens/settings/settings.screen.dart';
+import 'package:penniverse/extension.dart';
+import 'package:penniverse/providers/app_provider.dart';
+import 'package:penniverse/screens/accounts/accounts.screen.dart';
+import 'package:penniverse/screens/categories/categories.screen.dart';
+import 'package:penniverse/screens/home/home.screen.dart';
+import 'package:penniverse/screens/onboard/onboard_screen.dart';
+import 'package:penniverse/screens/payments/payments_screen.dart';
+import 'package:penniverse/screens/settings/settings.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

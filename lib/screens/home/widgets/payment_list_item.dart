@@ -1,6 +1,6 @@
-import 'package:my_expense_app/extension.dart';
-import 'package:my_expense_app/model/payment.model.dart';
-import 'package:my_expense_app/widgets/currency.dart';
+import 'package:penniverse/extension.dart';
+import 'package:penniverse/model/payment.model.dart';
+import 'package:penniverse/widgets/currency.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../theme/colors.dart';

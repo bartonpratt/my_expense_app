@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:my_expense_app/helpers/db.helper.dart';
-import 'package:my_expense_app/model/account.model.dart';
+import 'package:penniverse/helpers/db.helper.dart';
+import 'package:penniverse/model/account.model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AccountDao {

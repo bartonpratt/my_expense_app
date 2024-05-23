@@ -1,6 +1,6 @@
 import 'package:currency_picker/currency_picker.dart';
-import 'package:my_expense_app/helpers/currency.helper.dart';
-import 'package:my_expense_app/providers/app_provider.dart';
+import 'package:penniverse/helpers/currency.helper.dart';
+import 'package:penniverse/providers/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

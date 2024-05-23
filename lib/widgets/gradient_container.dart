@@ -1,4 +1,4 @@
-import 'package:my_expense_app/extension.dart';
+import 'package:penniverse/extension.dart';
 import 'package:flutter/material.dart';
 
 class GradientContainer extends StatelessWidget {

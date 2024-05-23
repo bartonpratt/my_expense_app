@@ -1,12 +1,12 @@
 import 'package:events_emitter/events_emitter.dart';
-import 'package:my_expense_app/dao/account_dao.dart';
-import 'package:my_expense_app/events.dart';
-import 'package:my_expense_app/extension.dart';
-import 'package:my_expense_app/model/account.model.dart';
-import 'package:my_expense_app/theme/colors.dart';
-import 'package:my_expense_app/widgets/currency.dart';
-import 'package:my_expense_app/widgets/dialog/account_form.dialog.dart';
-import 'package:my_expense_app/widgets/dialog/confirm.modal.dart';
+import 'package:penniverse/dao/account_dao.dart';
+import 'package:penniverse/events.dart';
+import 'package:penniverse/extension.dart';
+import 'package:penniverse/model/account.model.dart';
+import 'package:penniverse/theme/colors.dart';
+import 'package:penniverse/widgets/currency.dart';
+import 'package:penniverse/widgets/dialog/account_form.dialog.dart';
+import 'package:penniverse/widgets/dialog/confirm.modal.dart';
 import 'package:flutter/material.dart';
 
 maskAccount(String value, [int lastLength = 4]){
