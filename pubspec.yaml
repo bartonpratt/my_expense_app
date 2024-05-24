@@ -41,14 +41,12 @@ dependencies:
   cupertino_icons: ^1.0.6
   provider: ^6.1.2
   events_emitter: ^0.5.2
-  dynamic_color: ^1.7.0
   currency_picker: ^2.0.21
   ficonsax: ^0.0.3
   intl: ^0.19.0
   shared_preferences: ^2.2.3
   sqflite: ^2.3.3+1
   sqflite_common_ffi: ^2.3.3
-  flare_flutter: ^3.0.2
   rive: ^0.11.11
   animated_text_kit: ^4.2.2
   image_picker: ^1.1.1
@@ -220,15 +218,6 @@ flutter:
         - asset: assets/fonts/NotoSans-Italic.ttf
           style: italic
 
-    - family: Helvetica
-      fonts:
-        - asset: assets/fonts/Helvetica-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/Helvetica.ttf
-
-    - family: Open Sans
-      fonts:
-        - asset: assets/fonts/open-sans.ttf
 
 
     - family: Bobbers

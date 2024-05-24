@@ -1,4 +1,3 @@
-import 'package:penniverse/extension.dart';
 import 'package:penniverse/model/account.model.dart';
 import 'package:penniverse/widgets/currency.dart';
 import 'package:flutter/material.dart';
@@ -48,8 +47,8 @@ class _AccountSlider extends State<AccountsSlider>{
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CurrencyText(account.balance ?? 0, style: Theme.of(context).textTheme.headlineMedium?.merge(
-                                TextStyle(
-                                    color: Colors.white, fontFamily: context.monoFontFamily,
+                                const TextStyle(
+                                    color: Colors.white,
                                     fontWeight: FontWeight.w600,
                                 ),
                               ),

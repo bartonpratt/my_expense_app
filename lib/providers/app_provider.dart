@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-class AppProvider extends ChangeNotifier{
+class AppProvider extends ChangeNotifier {
   String? _username;
-  Color ?_color;
+  Color? _color;
   String? _currency;
   SharedPreferences? _preferences;
 
@@ -11,7 +11,7 @@ class AppProvider extends ChangeNotifier{
   String? get currency => _currency;
 
   static Future<AppProvider> getInstance() async {
-    AppProvider provider =  AppProvider();
+    AppProvider provider = AppProvider();
     provider._preferences = await SharedPreferences.getInstance();
     try {
       int? color = provider._preferences?.getInt("color");
@@ -21,38 +21,39 @@ class AppProvider extends ChangeNotifier{
       provider._color = color != null ? Color(color) : Colors.red;
       provider._username = username;
       provider._currency = currency;
-      provider.notifyListeners();
-    } catch(err){
-      debugPrint("Something wrong....");
+    } catch (err) {
+      debugPrint("Error loading preferences: $err");
     }
+    provider.notifyListeners();
     return provider;
-
   }
 
-  sync() async {
-    if(_username!=null) await _preferences!.setString("username", _username!);
-    if(_currency!=null) await _preferences!.setString("currency", _currency!);
-    if(_color!=null) await _preferences!.setInt("currency", _color!.value);
+  Future<void> sync() async {
+    if (_username != null) await _preferences!.setString("username", _username!);
+    if (_currency != null) await _preferences!.setString("currency", _currency!);
+    if (_color != null) await _preferences!.setInt("color", _color!.value);
   }
 
-  Future<void> update({String? username, String? currency}) async {
+  Future<void> update({String? username, String? currency, Color? color}) async {
+    _username = username ?? _username;
+    _currency = currency ?? _currency;
+    _color = color ?? _color;
+    await sync();
+    notifyListeners();
+  }
+
+  Future<void> updateUsername(String username) async {
+    _username = username;
+    await sync();
+    notifyListeners();
+  }
+
+  Future<void> updateCurrency(String currency) async {
     _currency = currency;
-    _username = username;
     await sync();
     notifyListeners();
   }
 
-  Future<void> updateUsername(username) async {
-    _username = username;
-    await sync();
-    notifyListeners();
-  }
-
-  Future<void> updateCurrency(currency) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("currency", currency);
-    notifyListeners();
-  }
   Future<void> updateThemeColor(Color color) async {
     _color = color;
     await sync();
@@ -60,10 +61,9 @@ class AppProvider extends ChangeNotifier{
   }
 
   Future<void> reset() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove("currency");
-    await prefs.remove("color");
-    await prefs.remove("username");
+    await _preferences!.remove("currency");
+    await _preferences!.remove("color");
+    await _preferences!.remove("username");
 
     _username = null;
     _currency = null;
@@ -71,5 +71,4 @@ class AppProvider extends ChangeNotifier{
 
     notifyListeners();
   }
-
 }
