@@ -3,12 +3,13 @@ import 'package:penniverse/extension.dart';
 import 'package:penniverse/providers/app_provider.dart';
 import 'package:penniverse/screens/accounts/accounts.screen.dart';
 import 'package:penniverse/screens/categories/categories.screen.dart';
-import 'package:penniverse/screens/home/home.screen.dart';
 import 'package:penniverse/screens/onboard/onboard_screen.dart';
 import 'package:penniverse/screens/payments/payments_screen.dart';
-import 'package:penniverse/screens/settings/settings.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'home/home.screen.dart';
+
 
 class MainScreen extends StatefulWidget{
   const MainScreen({super.key});
@@ -60,7 +61,7 @@ class _MainScreenState extends State<MainScreen>{
                 Expanded(
                     child:IndexedStack(
                       index: _selected,
-                      children: const [
+                      children: const <Widget>[
                         HomeScreen(),
                         PaymentsScreen(),
                         AccountsScreen(),

@@ -10,11 +10,11 @@ class AccountDao {
     return result;
   }
 
-  Future<List<Account>> find({  bool withSummery=false}) async {
+  Future<List<Account>> find({  bool withSummary=false}) async {
     final Database db = await getDBInstance();
 
     List<Map<String, dynamic>> result;
-    if(withSummery){
+    if(withSummary){
       String fields = [
         "a.id","a.name","a.holderName","a.accountNumber","a.icon","a.color","a.isDefault",
         "SUM(CASE WHEN t.type='DR' AND t.account=a.id THEN t.amount END) as expense",
@@ -29,7 +29,7 @@ class AccountDao {
     if (result.isNotEmpty) {
       accounts = result.map((item) {
         Map<String, dynamic> nItem = Map.from(item);
-        if(withSummery) {
+        if(withSummary) {
           nItem["income"] = nItem["income"] ?? 0.0;
           nItem["expense"] = nItem["expense"]??0.0;
           nItem["balance"] = double.parse((nItem["income"] - nItem["expense"]).toString());

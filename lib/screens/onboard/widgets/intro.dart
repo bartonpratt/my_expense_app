@@ -10,14 +10,15 @@ class Intro extends StatefulWidget {
   _IntroState createState() => _IntroState();
 }
 
-const brightYellow = Color(0xFFFFFFFF);
+const white = Color(0xFFFFFFFF);
 const darkYellow = Color(0xFFFFB900);
 
 class _IntroState extends State<Intro> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: brightYellow,
+      backgroundColor: Colors.black,
+
       body: Column(
         children: [
           const Flexible(
@@ -31,7 +32,7 @@ class _IntroState extends State<Intro> {
             width: 250.0,
             child: DefaultTextStyle(
               style: const TextStyle(
-                  fontSize: 30.0, fontFamily: 'Bobbers', color: Colors.black),
+                  fontSize: 30.0, fontFamily: 'Bobbers', color: Colors.white),
               child: AnimatedTextKit(
                 animatedTexts: [
                   TyperAnimatedText('Control your spending,'),
@@ -56,8 +57,7 @@ class _IntroState extends State<Intro> {
                   borderRadius: BorderRadius.circular(50),
                 ),
               ),
-              onPressed:
-                  widget.onGetStarted,
+              onPressed: widget.onGetStarted,
               child: const Text(
                 'Get Started',
                 style: TextStyle(color: Colors.black54),

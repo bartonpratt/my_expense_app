@@ -7,8 +7,8 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await getDBInstance();
-
   AppProvider appProvider = await AppProvider.getInstance();
+  WidgetsFlutterBinding.ensureInitialized();
 
   runApp(
       MultiProvider(

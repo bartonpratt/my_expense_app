@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:events_emitter/events_emitter.dart';
 import 'package:ficonsax/ficonsax.dart';
+import 'package:flutter/services.dart';
+import 'package:pdf/pdf.dart';
 import 'package:penniverse/dao/account_dao.dart';
 import 'package:penniverse/dao/payment_dao.dart';
 import 'package:penniverse/events.dart';
@@ -16,8 +20,11 @@ import 'package:penniverse/theme/colors.dart';
 import 'package:penniverse/widgets/currency.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:google_fonts/google_fonts.dart';
 
 String greeting() {
   var hour = DateTime.now().hour;
@@ -69,6 +76,133 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _showFilterDialog() async {
+    // Show filter dialog
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        DateTime selectedDate = DateTime.now();
+        return AlertDialog(
+          title: const Text('Select Filter'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ListTile(
+                    title: const Text('Annual'),
+                    onTap: () async {
+                      final selectedYear =
+                          await _selectYear(context, selectedDate.year);
+                      if (selectedYear != null) {
+                        _applyAnnualFilter(selectedYear);
+                        Navigator.pop(context);
+                        // Set focus on material button after closing the dialog
+                        FocusScope.of(context).requestFocus(FocusNode());
+                      }
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Monthly'),
+                    onTap: () async {
+                      final selectedMonth =
+                          await _selectMonth(context, selectedDate);
+                      if (selectedMonth != null) {
+                        _applyMonthlyFilter(selectedMonth);
+                        Navigator.pop(context);
+                        // Set focus on material button after closing the dialog
+                        FocusScope.of(context).requestFocus(FocusNode());
+                      }
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Weekly'),
+                    onTap: () async {
+                      final selectedWeek = await _selectWeek(context);
+                      if (selectedWeek != null) {
+                        _applyWeeklyFilter(selectedWeek);
+                        Navigator.pop(context);
+                        // Set focus on material button after closing the dialog
+                        FocusScope.of(context).requestFocus(FocusNode());
+                      }
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Future<int?> _selectYear(BuildContext context, int initialYear) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(initialYear),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(DateTime.now().year + 5),
+      initialDatePickerMode: DatePickerMode.year,
+    );
+    return picked?.year;
+  }
+
+  Future<DateTime?> _selectMonth(
+      BuildContext context, DateTime initialDate) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(DateTime.now().year + 5),
+      initialDatePickerMode: DatePickerMode.year,
+    );
+    return picked;
+  }
+
+  Future<DateTimeRange?> _selectWeek(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(DateTime.now().year + 5),
+      initialDatePickerMode: DatePickerMode.day,
+    );
+    if (picked != null) {
+      DateTime startOfWeek =
+          picked.subtract(Duration(days: picked.weekday - 1));
+      DateTime endOfWeek = startOfWeek.add(const Duration(days: 6));
+      return DateTimeRange(start: startOfWeek, end: endOfWeek);
+    }
+    return null;
+  }
+
+  void _applyAnnualFilter(int year) {
+    setState(() {
+      _range = DateTimeRange(
+        start: DateTime(year, 1, 1),
+        end: DateTime(year, 12, 31),
+      );
+    });
+    _fetchTransactions();
+  }
+
+  void _applyMonthlyFilter(DateTime month) {
+    setState(() {
+      _range = DateTimeRange(
+        start: DateTime(month.year, month.month, 1),
+        end: DateTime(month.year, month.month + 1, 0),
+      );
+    });
+    _fetchTransactions();
+  }
+
+  void _applyWeeklyFilter(DateTimeRange weekRange) {
+    setState(() {
+      _range = weekRange;
+    });
+    _fetchTransactions();
+  }
+
   void _fetchTransactions() async {
     List<Payment> trans = await _paymentDao.find(
         range: _range, category: _category, account: _account);
@@ -79,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (payment.type == PaymentType.debit) expense += payment.amount;
     }
 
-    List<Account> accounts = await _accountDao.find(withSummery: true);
+    List<Account> accounts = await _accountDao.find(withSummary: true);
 
     setState(() {
       _payments = trans;
@@ -88,6 +222,153 @@ class _HomeScreenState extends State<HomeScreen> {
       _accounts = accounts;
     });
   }
+
+  int maxItemsPerPage = 20; // Adjust this number based on your layout
+
+  Future<void> _generatePDF(String username, DateTimeRange dateRange) async {
+    final dateFormat = DateFormat("yyyy-MM-dd hh:mma");
+    final ByteData logoImage =
+        await rootBundle.load('assets/logo/penniverse_logo.png');
+    final Uint8List logoImageUint8List = logoImage.buffer.asUint8List();
+    final pw.MemoryImage logo = pw.MemoryImage(logoImageUint8List);
+
+    final roboto = await PdfGoogleFonts.robotoRegular();
+    final robotoBold = await PdfGoogleFonts.robotoBold();
+
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        theme: pw.ThemeData.withFont(
+          base: roboto,
+          bold: robotoBold,
+        ),header: (context) {
+          return pw.Column(children: [
+              pw.Container(
+                height: 70,
+                width: 70,
+                child: pw.Image(logo),
+              ),
+              pw.Padding(
+                padding: const pw.EdgeInsets.only(left: 10),
+                child: pw.Text("Penniverse"),
+              ),
+            ]);
+
+        },
+        footer: (pw.Context context) {
+          return pw.Container(
+            alignment: pw.Alignment.center,
+            margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
+            child: pw.Text(
+              'Thank you for using Penniverse. -JB',
+              style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+            ),
+          );
+        },
+        build: (pw.Context context) {
+          return [
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+
+                pw.SizedBox(height: 20),
+                pw.Center(
+                  child: pw.Text(
+                    "Transaction Summary",
+                    style: pw.TextStyle(
+                      fontSize: 24,
+                      fontWeight: pw.FontWeight.bold,
+                      decoration: pw.TextDecoration.underline,
+                    ),
+                  ),
+                ),
+                pw.SizedBox(height: 20),
+                pw.Text("Hi $username!"),
+                pw.SizedBox(height: 20),
+                pw.Text("General Accounts:",
+                    style: pw.TextStyle(
+                        fontSize: 16, fontWeight: pw.FontWeight.bold)),
+                pw.Table.fromTextArray(
+                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  headerDecoration:
+                      const pw.BoxDecoration(color: PdfColors.grey300),
+                  cellHeight: 30,
+                  cellAlignment: pw.Alignment.centerLeft,
+                  cellAlignments: {0: pw.Alignment.centerLeft},
+                  cellPadding: const pw.EdgeInsets.all(5),
+                  headers: [
+                    'Name',
+                    'Holder',
+                    'Account Number',
+                    'Balance',
+                    'Income',
+                    'Expense'
+                  ],
+                  data: _accounts
+                      .map((account) => [
+                            account.name ?? '',
+                            account.holderName ?? '',
+                            account.accountNumber ?? '',
+                            '${account.balance ?? 0}',
+                            '${account.income ?? 0}',
+                            '${account.expense ?? 0}',
+                          ])
+                      .toList(),
+                ),
+              ],
+            ),
+            pw.SizedBox(height: 20),
+            pw.Center(
+              child: pw.Container(
+                child: pw.Text(
+                  "Transactions from ${DateFormat("dd MMM yyyy").format(dateRange.start)} - ${DateFormat("dd MMM yyyy").format(dateRange.end)}",
+                  style: pw.TextStyle(
+                      fontSize: 16, fontWeight: pw.FontWeight.bold),
+                ),
+                decoration: const pw.BoxDecoration(
+                  border: pw.Border(
+                    bottom: pw.BorderSide(color: PdfColors.black, width: 1.0),
+                  ),
+                ),
+              ),
+            ),
+            pw.SizedBox(height: 16),
+            pw.Text("Total Income: ${_income.toString()}"),
+            pw.Text("Total Expenses: ${_expense.toString()}"),
+            pw.Table.fromTextArray(
+              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+              headerDecoration:
+                  const pw.BoxDecoration(color: PdfColors.grey300),
+              cellHeight: 30,
+              cellAlignment: pw.Alignment.centerLeft,
+              cellAlignments: {0: pw.Alignment.centerLeft},
+              cellPadding: const pw.EdgeInsets.all(5),
+              headers: ['Date', 'Category', 'Amount', 'Type'],
+              data: _payments
+                  .map((payment) => [
+                        dateFormat
+                            .format(payment.datetime)
+                            .replaceFirst('AM', 'am')
+                            .replaceFirst('PM', 'pm'),
+                        payment.category.name ?? '',
+                        '${payment.amount.toString()}',
+                        payment.type == PaymentType.credit ? 'CR' : 'DR',
+                      ])
+                  .toList(),
+            ),
+          ];
+        },
+      ),
+    );
+
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
+  }
+
+
 
   @override
   void initState() {
@@ -176,32 +457,39 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Row(children: [
-                  const Text("Transactions",
+                child: Row(
+                  children: [
+                    const Text(
+                      "Transactions",
                       style:
-                      TextStyle(fontWeight: FontWeight.w600, fontSize: 17)),
-                  const Expanded(child: SizedBox()),
-                  MaterialButton(
-                    onPressed: () {
-                      handleChooseDateRange();
-                    },
-                    height: double.minPositive,
-                    padding: EdgeInsets.zero,
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    child: Row(
-                      children: [
-                        Text(
-                          "${DateFormat("dd MMM").format(_range.start)} - ${DateFormat("dd MMM").format(_range.end)}",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        const Icon(Icons.arrow_drop_down_outlined)
-                      ],
+                          TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
                     ),
-                  ),
-                ]),
+                    const Expanded(child: SizedBox()),
+                    MaterialButton(
+                      onPressed: handleChooseDateRange,
+                      height: double.minPositive,
+                      padding: EdgeInsets.zero,
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      child: Row(
+                        children: [
+                          Text(
+                            "${DateFormat("dd MMM").format(_range.start)} - ${DateFormat("dd MMM").format(_range.end)}",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          const Icon(Icons.arrow_drop_down_outlined)
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.filter_list),
+                      onPressed: _showFilterDialog,
+                    ),
+                  ],
+                ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -285,7 +573,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   length: 2,
                   child: Column(
                     children: [
-                      TabBar(
+                      const TabBar(
                         tabs: [
                           Tab(text: "Payments"),
                           Tab(text: "Expense Chart"),
@@ -301,12 +589,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 return PaymentListItem(
                                     payment: _payments[index],
                                     onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
                                               builder: (builder) => PaymentForm(
-                                                type: _payments[index].type,
-                                                payment: _payments[index],
-                                              )));
+                                                    type: _payments[index].type,
+                                                    payment: _payments[index],
+                                                  )));
                                     });
                               },
                               separatorBuilder:
@@ -315,20 +603,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                   width: double.infinity,
                                   color: Colors.grey.withAlpha(25),
                                   height: 1,
-                                  margin: const EdgeInsets.only(left: 75, right: 20),
+                                  margin: const EdgeInsets.only(
+                                      left: 75, right: 20),
                                 );
                               },
                               itemCount: _payments.length,
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(16.0),
+                              padding: const EdgeInsets.all(8.0),
                               child: PieChart(
                                 PieChartData(
                                   pieTouchData: PieTouchData(
                                     touchCallback:
                                         (FlTouchEvent event, pieTouchResponse) {
                                       setState(() {
-                                        if (!event.isInterestedForInteractions ||
+                                        if (!event
+                                                .isInterestedForInteractions ||
                                             pieTouchResponse == null ||
                                             pieTouchResponse.touchedSection ==
                                                 null) {
@@ -372,9 +662,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        shape: const CircleBorder(),
+        heroTag: "pdf-hero-fab",
+        onPressed: () {
+          _generatePDF(
+              Provider.of<AppProvider>(context, listen: false).username ??
+                  "Guest",
+              _range);
+        },
+        child: const Icon(Icons.picture_as_pdf),
+      ),
     );
   }
-
 
   List<PieChartSectionData> _buildChartSections() {
     Map<Category, double> categoryExpenses = {};
@@ -412,7 +712,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return sections;
   }
-
-
-
 }
+
+//TODO Under chart, list of the expenses & total number of transactions

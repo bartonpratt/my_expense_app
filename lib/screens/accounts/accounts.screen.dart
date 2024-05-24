@@ -33,7 +33,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
 
 
   void loadData() async {
-    List<Account> accounts = await _accountDao.find(withSummery: true);
+    List<Account> accounts = await _accountDao.find(withSummary: true);
     setState(() {
       _accounts = accounts;
     });
@@ -218,6 +218,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
             showDialog(context: context, builder: (builder)=>const AccountForm());
           },
           child: const Icon(Icons.add),
+
         )
     );
   }
