@@ -1,7 +1,6 @@
 import 'package:events_emitter/events_emitter.dart';
 import 'package:penniverse/dao/account_dao.dart';
 import 'package:penniverse/events.dart';
-import 'package:penniverse/extension.dart';
 import 'package:penniverse/model/account.model.dart';
 import 'package:penniverse/theme/colors.dart';
 import 'package:penniverse/widgets/currency.dart';
@@ -78,8 +77,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       margin: const EdgeInsets.only(bottom: 20),
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                       decoration: BoxDecoration(
-                          color: account.color.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(18),
+                        color: account.color.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(18),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +103,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                                   ]
                               )
                           ),
-                          CurrencyText(account.balance??0, style:  TextStyle(fontSize: 20, fontWeight: FontWeight.w700, fontFamily: context.monoFontFamily),),
+                          CurrencyText(account.balance??0, style:  const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),),
                           const SizedBox(height: 10,),
                           Row(
                             children: [
@@ -120,7 +119,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                                               ]
                                           )
                                       ),
-                                      CurrencyText(account.income??0, style:  TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: ThemeColors.success, fontFamily: context.monoFontFamily),)
+                                      CurrencyText(account.income??0, style:  const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: ThemeColors.success),)
                                     ],
                                   )
                               ),
@@ -136,7 +135,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                                               ]
                                           )
                                       ),
-                                      CurrencyText(account.expense??0, style:  TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: ThemeColors.error, fontFamily: context.monoFontFamily),)
+                                      CurrencyText(account.expense??0, style:  const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: ThemeColors.error),)
 
                                     ],
                                   )
@@ -153,59 +152,59 @@ class _AccountsScreenState extends State<AccountsScreen> {
                   ),
 
                   Positioned(
-                      right: 0,
-                      top: 0,
+                    right: 0,
+                    top: 0,
                     child:  IconButton(
-                        key: accKey,
-                        onPressed: (){
-                          final RenderBox renderBox =
-                          accKey.currentContext?.findRenderObject() as RenderBox;
-                          final Size size = renderBox.size;
-                          final Offset offset = renderBox.localToGlobal(Offset.zero);
+                      key: accKey,
+                      onPressed: (){
+                        final RenderBox renderBox =
+                        accKey.currentContext?.findRenderObject() as RenderBox;
+                        final Size size = renderBox.size;
+                        final Offset offset = renderBox.localToGlobal(Offset.zero);
 
-                          showMenu(
-                            context: context,
-                            position: RelativeRect.fromLTRB(
-                                offset.dx,
-                                offset.dy + size.height,
-                                offset.dx + size.width,
-                                offset.dy + size.height
+                        showMenu(
+                          context: context,
+                          position: RelativeRect.fromLTRB(
+                              offset.dx,
+                              offset.dy + size.height,
+                              offset.dx + size.width,
+                              offset.dy + size.height
+                          ),
+                          items: [
+                            PopupMenuItem<String>(
+                              value: '1',
+                              child: const Text('Edit'),
+                              onTap: (){
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  showDialog(context: context, builder: (builder)=>AccountForm(account: account,));
+                                });
+                              },
                             ),
-                            items: [
-                              PopupMenuItem<String>(
-                                value: '1',
-                                child: const Text('Edit'),
-                                onTap: (){
-                                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                                    showDialog(context: context, builder: (builder)=>AccountForm(account: account,));
-                                  });
-                                },
-                              ),
-                              PopupMenuItem<String>(
-                                value: '2',
-                                child: const Text('Delete', style: TextStyle(color: ThemeColors.error),),
-                                onTap: (){
-                                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                                    ConfirmModal.showConfirmDialog(
-                                        context,
-                                        title: "Are you sure?",
-                                        content: const Text("All the paymentswill be deleted belongs to this account"),
-                                        onConfirm: () async {
-                                          Navigator.pop(context);
-                                          await _accountDao.delete(account.id!);
-                                          globalEvent.emit("account_update");
-                                        },
-                                        onCancel: (){
-                                          Navigator.pop(context);
-                                        }
-                                    );
-                                  });
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                        icon: const Icon(Icons.more_vert, size: 20,),
+                            PopupMenuItem<String>(
+                              value: '2',
+                              child: const Text('Delete', style: TextStyle(color: ThemeColors.error),),
+                              onTap: (){
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  ConfirmModal.showConfirmDialog(
+                                      context,
+                                      title: "Are you sure?",
+                                      content: const Text("All the paymentswill be deleted belongs to this account"),
+                                      onConfirm: () async {
+                                        Navigator.pop(context);
+                                        await _accountDao.delete(account.id!);
+                                        globalEvent.emit("account_update");
+                                      },
+                                      onCancel: (){
+                                        Navigator.pop(context);
+                                      }
+                                  );
+                                });
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                      icon: const Icon(Icons.more_vert, size: 20,),
                     ),
                   )
                 ],

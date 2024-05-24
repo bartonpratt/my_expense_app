@@ -109,4 +109,18 @@ class ThemeColors{
     700: Color(0xFFBD0053),
   });
   static const int _primaryAccentValue = 0xFFE50065;
+
+  static const Color darkPrimary = Colors.blue;
+  static const MaterialColor darkAccent = Colors.blue;
+  static ThemeData darkTheme() {
+    return ThemeData(
+      colorScheme: const ColorScheme.dark(
+        primary: darkPrimary,onPrimary: Colors.red,
+        secondary: darkAccent,
+      ),
+      brightness: Brightness.dark,
+      // Define other dark mode theme properties here
+    );
+  }
+
 }

@@ -122,7 +122,6 @@ class _CategoryForm extends State<CategoryForm> {
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,4}')),
                 ],
-                style: TextStyle(fontFamily: context.monoFontFamily),
                 decoration: InputDecoration(
                   labelText: 'Budget',
                   hintText: 'Enter budget',
@@ -135,8 +134,7 @@ class _CategoryForm extends State<CategoryForm> {
                   prefixIcon: Padding(
                       padding: const EdgeInsets.only(left: 15),
                       child: CurrencyText(null,
-                          style:
-                              TextStyle(fontFamily: context.monoFontFamily))),
+                      )),
                   prefixIconConstraints:
                       const BoxConstraints(minWidth: 40, minHeight: 0),
                 ),

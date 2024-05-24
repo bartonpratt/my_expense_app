@@ -7,7 +7,6 @@ import 'package:penniverse/dao/account_dao.dart';
 import 'package:penniverse/dao/category_dao.dart';
 import 'package:penniverse/dao/payment_dao.dart';
 import 'package:penniverse/events.dart';
-import 'package:penniverse/extension.dart';
 import 'package:penniverse/model/account.model.dart';
 import 'package:penniverse/model/category.model.dart';
 import 'package:penniverse/model/payment.model.dart';
@@ -309,7 +308,7 @@ class _PaymentForm extends State<PaymentForm> {
                     child: TextFormField(
                       decoration: InputDecoration(
                           filled: true,
-                          hintText: "Please enter tittle",
+                          hintText: "Please enter title",
                           label: const Text("Title"),
                           border: UnderlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -333,7 +332,6 @@ class _PaymentForm extends State<PaymentForm> {
                           FilteringTextInputFormatter.allow(
                               RegExp(r'^\d+\.?\d{0,4}')),
                         ],
-                        style: TextStyle(fontFamily: context.monoFontFamily),
                         decoration: InputDecoration(
                             filled: true,
                             hintText: "0.0",
@@ -341,8 +339,7 @@ class _PaymentForm extends State<PaymentForm> {
                             prefixIcon: Padding(
                                 padding: const EdgeInsets.only(left: 15),
                                 child: CurrencyText(null,
-                                    style: TextStyle(
-                                        fontFamily: context.monoFontFamily))),
+                                )),
                             prefixIconConstraints:
                                 const BoxConstraints(minWidth: 0, minHeight: 0),
                             border: UnderlineInputBorder(

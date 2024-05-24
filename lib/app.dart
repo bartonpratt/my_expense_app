@@ -1,6 +1,7 @@
 import 'package:penniverse/screens/main.screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:penniverse/theme/colors.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -10,6 +11,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'My Expense App',
+      darkTheme: ThemeColors.darkTheme(),
       theme: ThemeData(
        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
          primaryColor: Colors.blue

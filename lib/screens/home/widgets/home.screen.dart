@@ -657,41 +657,64 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<PieChartSectionData> _buildChartSections() {
-    Map<Category, double> categoryExpenses = {};
+    Map<String, CategoryExpense> categoryExpenses = {};  // Use category name as the key and a custom class to store amount and count
+    Map<String, Category> categoryDetails = {}; // Store category details
+
     for (var payment in _payments) {
       if (payment.type == PaymentType.debit) {
         var category = payment.category;
-        categoryExpenses.update(category, (value) => value + payment.amount,
-            ifAbsent: () => payment.amount);
+        if (categoryExpenses.containsKey(category.name)) {
+          categoryExpenses[category.name]!.amount += payment.amount;
+          categoryExpenses[category.name]!.count += 1;
+        } else {
+          categoryExpenses[category.name] = CategoryExpense(payment.amount, 1);
+        }
+        categoryDetails[category.name] = category; // Store the category details
       }
     }
 
     List<PieChartSectionData> sections = [];
     int i = 0;
     for (var entry in categoryExpenses.entries) {
-      final category = entry.key;
-      final amount = entry.value;
+      final categoryName = entry.key;
+      final categoryExpense = entry.value;
+      final category = categoryDetails[categoryName]; // Retrieve category details
       final isTouched = i == touchedIndex;
       final radius = isTouched ? 60.0 : 50.0;
-      sections.add(
-        PieChartSectionData(
-          titlePositionPercentageOffset: 1,
-          value: amount,
-          title: category.name,
-          color: category.color,
-          radius: radius,
-          titleStyle: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
+
+      if (category != null) {
+        sections.add(
+          PieChartSectionData(
+            titlePositionPercentageOffset: 1,
+            value: categoryExpense.amount,
+            title: '$categoryName (${categoryExpense.count})',  // Include the count in the title
+            color: category.color,
+            radius: radius,
+            titleStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+
+            ),
           ),
-        ),
-      );
+        );
+      }
       i++;
     }
 
     return sections;
   }
+
+
+
+
+
+}
+
+class CategoryExpense {
+  double amount;
+  int count;
+
+  CategoryExpense(this.amount, this.count);
 }
 
 //TODO Under chart, list of the expenses & total number of transactions

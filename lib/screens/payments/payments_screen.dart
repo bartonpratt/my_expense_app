@@ -106,6 +106,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                 ));
               },
             );
+
           },
           separatorBuilder: (BuildContext context, int index) {
             return Container(

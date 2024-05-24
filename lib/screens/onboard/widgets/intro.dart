@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -46,13 +48,12 @@ class _IntroState extends State<Intro> {
               ),
             ),
           ),
-          Spacer(),
+          const Spacer(),
           Flexible(
             flex: 2,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: darkYellow,
-                elevation: 4,
+                elevation: 4, backgroundColor: Colors.blue,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),
                 ),

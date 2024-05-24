@@ -1,4 +1,3 @@
-import 'package:penniverse/extension.dart';
 import 'package:penniverse/model/payment.model.dart';
 import 'package:penniverse/widgets/currency.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +35,7 @@ class PaymentListItem extends StatelessWidget{
       ),
       trailing: CurrencyText(
           isCredit? payment.amount : -payment.amount,
-          style: Theme.of(context).textTheme.bodyMedium?.apply(color: isCredit? ThemeColors.success:ThemeColors.error, fontFamily: context.monoFontFamily)
+          style: Theme.of(context).textTheme.bodyMedium?.apply(color: isCredit? ThemeColors.success:ThemeColors.error)
       ),
     ) ;
   }
