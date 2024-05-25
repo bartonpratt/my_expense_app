@@ -213,12 +213,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int maxItemsPerPage = 20; // Adjust this number based on your layout
 
-  Future<void> _generatePDF(String username, DateTimeRange dateRange) async {
+  Future<void> _generatePDF(String username, DateTimeRange dateRange, String currencySymbol) async {
     try {
       final dateFormat = DateFormat("yyyy-MM-dd hh:mma");
       final ByteData logoImage = await rootBundle.load('assets/logo/penniverse_logo.png');
       final Uint8List logoImageUint8List = logoImage.buffer.asUint8List();
       final pw.MemoryImage logo = pw.MemoryImage(logoImageUint8List);
+      final ByteData signatureImage = await rootBundle.load('assets/images/signature.png');
+      final Uint8List signatureImageUint8List = signatureImage.buffer.asUint8List();
+      final pw.MemoryImage signature = pw.MemoryImage(signatureImageUint8List);
+      final currencySymbol = Provider.of<AppProvider>(context, listen: false).currency!;
 
       final roboto = await PdfGoogleFonts.robotoRegular();
       final robotoBold = await PdfGoogleFonts.robotoBold();
@@ -233,8 +237,8 @@ class _HomeScreenState extends State<HomeScreen> {
             bold: robotoBold,
           ),
           header: (context) => _buildPdfHeader(logo),
-          footer: (context) => _buildPdfFooter(),
-          build: (context) => _buildPdfContent(username, dateRange, dateFormat),
+          footer: (context) => _buildPdfFooter(signature),
+          build: (context) => _buildPdfContent(username, dateRange, dateFormat,currencySymbol),
         ),
       );
 
@@ -242,8 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onLayout: (PdfPageFormat format) async => pdf.save(),
       );
     } catch (e) {
-      // ignore: avoid_print
-      print('Error generating PDF: $e');
+      debugPrint('Error generating PDF: $e');
       // Handle error, e.g., show a message to the user
     }
   }
@@ -264,18 +267,26 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  pw.Widget _buildPdfFooter() {
+  pw.Widget _buildPdfFooter(pw.MemoryImage signature) {
+
     return pw.Container(
       alignment: pw.Alignment.center,
       margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
-      child: pw.Text(
-        'Thank you for using Penniverse. -JB',
-        style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+      child: pw.Column(
+        mainAxisSize: pw.MainAxisSize.min,
+        children: [
+          pw.Text(
+            'Thank you for using Penniverse. -JB',
+            style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
+          ),
+          pw.SizedBox(height: 10), // Add some spacing between text and image
+          pw.Image(signature, width: 100, height: 50), // Adjust width and height as needed
+        ],
       ),
     );
   }
 
-  List<pw.Widget> _buildPdfContent(String username, DateTimeRange dateRange, DateFormat dateFormat) {
+  List<pw.Widget> _buildPdfContent(String username, DateTimeRange dateRange, DateFormat dateFormat,String currencySymbol) {
     return [
       pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -302,7 +313,7 @@ class _HomeScreenState extends State<HomeScreen> {
             cellAlignment: pw.Alignment.centerLeft,
             cellAlignments: {0: pw.Alignment.centerLeft},
             cellPadding: const pw.EdgeInsets.all(5),
-            headers: ['Name', 'Holder', 'Account Number', 'Balance', 'Income', 'Expense'],
+            headers: ['Name', 'Holder', 'Account Number', 'Balance ($currencySymbol)', 'Income ($currencySymbol)', 'Expense ($currencySymbol)'],
             data: _accounts.map((account) => [
               account.name,
               account.holderName,
@@ -328,8 +339,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       pw.SizedBox(height: 16),
 
-      pw.Text("Total Income:${CurrencyText(_income.toString() as double?)}"),
-      pw.Text("Total Expenses: ${_expense.toString()}"),
+      pw.Text("Total Income ($currencySymbol): ${(_income.toString())}"),
+      pw.Text("Total Expenses ($currencySymbol): ${_expense.toString()}"),
       pw.TableHelper.fromTextArray(
         headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
         headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
@@ -337,11 +348,11 @@ class _HomeScreenState extends State<HomeScreen> {
         cellAlignment: pw.Alignment.centerLeft,
         cellAlignments: {0: pw.Alignment.centerLeft},
         cellPadding: const pw.EdgeInsets.all(5),
-        headers: ['Date', 'Category', 'Amount', 'Type'],
+        headers: ['Date', 'Category', 'Amount ($currencySymbol)', 'Type'],
         data: _payments.map((payment) => [
           dateFormat.format(payment.datetime).replaceFirst('AM', 'am').replaceFirst('PM', 'pm'),
           payment.category.name,
-          (payment.amount.toString()),
+          payment.amount.toString(),
           payment.type == PaymentType.credit ? 'CR' : 'DR',
         ]).toList(),
       ),
@@ -650,7 +661,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _generatePDF(
               Provider.of<AppProvider>(context, listen: false).username ??
                   "Guest",
-              _range);
+              _range, Provider.of<AppProvider>(context, listen: false).currency!);
         },
         child: const Icon(Icons.picture_as_pdf),
       ),
@@ -714,4 +725,4 @@ class CategoryExpense {
 
   CategoryExpense(this.amount, this.count);
 }
-//TODO Under chart, list of the expenses & total number of transactions
+

@@ -243,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     } catch (e) {
       // ignore: avoid_print
-      print('Error generating PDF: $e');
+      debugPrint('Error generating PDF: $e');
       // Handle error, e.g., show a message to the user
     }
   }

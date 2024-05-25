@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:penniverse/helpers/migrations/migrations.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 Database? database;
@@ -96,6 +95,6 @@ Future<void> resetDatabase() async {
       });
     }
   } catch (e) {
-    print("Error resetting database: $e");
+    debugPrint("Error resetting database: $e");
   }
 }
