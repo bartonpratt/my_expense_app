@@ -13,12 +13,16 @@ class PaymentsScreen extends StatefulWidget {
   State<PaymentsScreen> createState() => _PaymentsScreenState();
 }
 
+enum PaymentFilter { all, debit, credit }
+
 class _PaymentsScreenState extends State<PaymentsScreen> {
   final PaymentDao _paymentDao = PaymentDao();
   EventListener? _paymentEventListener;
   List<Payment> _payments = [];
+  List<Payment> _filteredPayments = [];
   int _count = 0;
   final int limit = 20;
+  PaymentFilter _selectedFilter = PaymentFilter.all;
 
   void loadMore() async {
     if (_count > _payments.length || _payments.isEmpty) {
@@ -28,6 +32,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
       setState(() {
         _count = count;
         _payments.addAll(payments);
+        _applyFilter();
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -35,6 +40,18 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
         duration: Duration(seconds: 1),
       ));
     }
+  }
+
+  void _applyFilter() {
+    setState(() {
+      if (_selectedFilter == PaymentFilter.debit) {
+        _filteredPayments = _payments.where((p) => p.type == PaymentType.debit).toList();
+      } else if (_selectedFilter == PaymentFilter.credit) {
+        _filteredPayments = _payments.where((p) => p.type == PaymentType.credit).toList();
+      } else {
+        _filteredPayments = List.from(_payments);
+      }
+    });
   }
 
   @override
@@ -49,6 +66,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
       setState(() {
         _count = count;
         _payments = payments;
+        _applyFilter();
       });
       debugPrint("payments are changed");
     });
@@ -61,6 +79,13 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
     super.dispose();
   }
 
+  void _onFilterChanged(PaymentFilter filter) {
+    setState(() {
+      _selectedFilter = filter;
+      _applyFilter();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,6 +94,25 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
           "Payments",
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
         ),
+        actions: [
+          PopupMenuButton<PaymentFilter>(
+            onSelected: _onFilterChanged,
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<PaymentFilter>>[
+              const PopupMenuItem<PaymentFilter>(
+                value: PaymentFilter.all,
+                child: Text('All'),
+              ),
+              const PopupMenuItem<PaymentFilter>(
+                value: PaymentFilter.debit,
+                child: Text('Debit (DR)'),
+              ),
+              const PopupMenuItem<PaymentFilter>(
+                value: PaymentFilter.credit,
+                child: Text('Credit (CR)'),
+              ),
+            ],
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -78,8 +122,8 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
           });
           return loadMore();
         },
-        child: _payments.isEmpty
-            ?  Center(
+        child: _filteredPayments.isEmpty
+            ? Center(
           child: Column(
             children: [
               SizedBox(
@@ -93,15 +137,15 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
         )
             : ListView.separated(
           padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-          itemCount: _payments.length,
+          itemCount: _filteredPayments.length,
           itemBuilder: (BuildContext context, index) {
             return PaymentListItem(
-              payment: _payments[index],
+              payment: _filteredPayments[index],
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (builder) => PaymentForm(
-                    type: _payments[index].type,
-                    payment: _payments[index],
+                    type: _filteredPayments[index].type,
+                    payment: _filteredPayments[index],
                   ),
                 ));
               },
@@ -131,3 +175,4 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
     );
   }
 }
+

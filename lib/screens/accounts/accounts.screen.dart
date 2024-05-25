@@ -1,6 +1,7 @@
 import 'package:events_emitter/events_emitter.dart';
 import 'package:penniverse/dao/account_dao.dart';
 import 'package:penniverse/events.dart';
+
 import 'package:penniverse/model/account.model.dart';
 import 'package:penniverse/theme/colors.dart';
 import 'package:penniverse/widgets/currency.dart';
@@ -29,6 +30,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
   final AccountDao _accountDao = AccountDao();
   EventListener? _accountEventListener;
   List<Account> _accounts = [];
+  EventListener? _paymentEventListener;
 
 
   void loadData() async {
@@ -48,7 +50,10 @@ class _AccountsScreenState extends State<AccountsScreen> {
       debugPrint("accounts are changed");
       loadData();
     });
-
+    _paymentEventListener = globalEvent.on("payment_update", (data){
+      debugPrint("Payments are made, updating accounts");
+      globalEvent.emit("account_update");
+    });
 
   }
 
@@ -56,7 +61,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
   void dispose() {
 
     _accountEventListener?.cancel();
-
+    _paymentEventListener?.cancel();
     super.dispose();
   }
   @override
