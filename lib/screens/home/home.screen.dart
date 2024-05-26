@@ -57,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Account? _account;
   Category? _category;
 
+  Map<String, CategoryExpense> _categoryExpenses = {};
   void handleChooseDateRange() async {
     final selected = await showDateRangePicker(
       context: context,
@@ -88,7 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ListTile(
                     title: const Text('Annual'),
                     onTap: () async {
-                      final selectedYear = await _selectYear(context, selectedDate.year);
+                      final selectedYear =
+                          await _selectYear(context, selectedDate.year);
                       if (selectedYear != null) {
                         _applyAnnualFilter(selectedYear);
                         if (context.mounted) Navigator.pop(context);
@@ -98,7 +100,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ListTile(
                     title: const Text('Monthly'),
                     onTap: () async {
-                      final selectedMonth = await _selectMonth(context, selectedDate);
+                      final selectedMonth =
+                          await _selectMonth(context, selectedDate);
                       if (selectedMonth != null) {
                         _applyMonthlyFilter(selectedMonth);
                         if (context.mounted) Navigator.pop(context);
@@ -192,37 +195,49 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _fetchTransactions() async {
-    List<Payment> trans = await _paymentDao.find(
-        range: _range, category: _category, account: _account);
-    double income = 0;
-    double expense = 0;
-    for (var payment in trans) {
-      if (payment.type == PaymentType.credit) income += payment.amount;
-      if (payment.type == PaymentType.debit) expense += payment.amount;
+    try {
+      List<Payment> trans = await _paymentDao.find(
+          range: _range, category: _category, account: _account);
+      double income = 0;
+      double expense = 0;
+      for (var payment in trans) {
+        if (payment.type == PaymentType.credit) income += payment.amount;
+        if (payment.type == PaymentType.debit) expense += payment.amount;
+      }
+
+      List<Account> accounts = await _accountDao.find(withSummary: true);
+
+      setState(() {
+        _payments = trans;
+        _income = income;
+        _expense = expense;
+        _accounts = accounts;
+      });
+    } catch (e) {
+      debugPrint('Error fetching transactions: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to fetch transactions')),
+      );
     }
-
-    List<Account> accounts = await _accountDao.find(withSummary: true);
-
-    setState(() {
-      _payments = trans;
-      _income = income;
-      _expense = expense;
-      _accounts = accounts;
-    });
   }
 
   int maxItemsPerPage = 20; // Adjust this number based on your layout
 
-  Future<void> _generatePDF(String username, DateTimeRange dateRange, String currencySymbol) async {
+  Future<void> _generatePDF(
+      String username, DateTimeRange dateRange, String currencySymbol) async {
     try {
       final dateFormat = DateFormat("yyyy-MM-dd hh:mma");
-      final ByteData logoImage = await rootBundle.load('assets/logo/penniverse_logo.png');
+      final ByteData logoImage =
+          await rootBundle.load('assets/logo/penniverse_logo.png');
       final Uint8List logoImageUint8List = logoImage.buffer.asUint8List();
       final pw.MemoryImage logo = pw.MemoryImage(logoImageUint8List);
-      final ByteData signatureImage = await rootBundle.load('assets/images/signature.png');
-      final Uint8List signatureImageUint8List = signatureImage.buffer.asUint8List();
+      final ByteData signatureImage =
+          await rootBundle.load('assets/images/signature.png');
+      final Uint8List signatureImageUint8List =
+          signatureImage.buffer.asUint8List();
       final pw.MemoryImage signature = pw.MemoryImage(signatureImageUint8List);
-      final currencySymbol = Provider.of<AppProvider>(context, listen: false).currency!;
+      final currencySymbol =
+          Provider.of<AppProvider>(context, listen: false).currency!;
 
       final roboto = await PdfGoogleFonts.robotoRegular();
       final robotoBold = await PdfGoogleFonts.robotoBold();
@@ -238,7 +253,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           header: (context) => _buildPdfHeader(logo),
           footer: (context) => _buildPdfFooter(signature),
-          build: (context) => _buildPdfContent(username, dateRange, dateFormat,currencySymbol),
+          build: (context) =>
+              _buildPdfContent(username, dateRange, dateFormat, currencySymbol),
         ),
       );
 
@@ -268,7 +284,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   pw.Widget _buildPdfFooter(pw.MemoryImage signature) {
-
     return pw.Container(
       alignment: pw.Alignment.center,
       margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
@@ -280,13 +295,15 @@ class _HomeScreenState extends State<HomeScreen> {
             style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
           ),
           pw.SizedBox(height: 10), // Add some spacing between text and image
-          pw.Image(signature, width: 100, height: 50), // Adjust width and height as needed
+          pw.Image(signature,
+              width: 100, height: 50), // Adjust width and height as needed
         ],
       ),
     );
   }
 
-  List<pw.Widget> _buildPdfContent(String username, DateTimeRange dateRange, DateFormat dateFormat,String currencySymbol) {
+  List<pw.Widget> _buildPdfContent(String username, DateTimeRange dateRange,
+      DateFormat dateFormat, String currencySymbol) {
     return [
       pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -305,7 +322,9 @@ class _HomeScreenState extends State<HomeScreen> {
           pw.SizedBox(height: 20),
           pw.Text("Hi $username!"),
           pw.SizedBox(height: 20),
-          pw.Text("General Accounts:", style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+          pw.Text("General Accounts:",
+              style:
+                  pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
           pw.TableHelper.fromTextArray(
             headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
             headerDecoration: const pw.BoxDecoration(color: PdfColors.grey300),
@@ -313,15 +332,24 @@ class _HomeScreenState extends State<HomeScreen> {
             cellAlignment: pw.Alignment.centerLeft,
             cellAlignments: {0: pw.Alignment.centerLeft},
             cellPadding: const pw.EdgeInsets.all(5),
-            headers: ['Name', 'Holder', 'Account Number', 'Balance ($currencySymbol)', 'Income ($currencySymbol)', 'Expense ($currencySymbol)'],
-            data: _accounts.map((account) => [
-              account.name,
-              account.holderName,
-              account.accountNumber,
-              '${account.balance ?? 0}',
-              '${account.income ?? 0}',
-              '${account.expense ?? 0}',
-            ]).toList(),
+            headers: [
+              'Name',
+              'Holder',
+              'Account Number',
+              'Balance ($currencySymbol)',
+              'Income ($currencySymbol)',
+              'Expense ($currencySymbol)'
+            ],
+            data: _accounts
+                .map((account) => [
+                      account.name,
+                      account.holderName,
+                      account.accountNumber,
+                      '${account.balance ?? 0}',
+                      '${account.income ?? 0}',
+                      '${account.expense ?? 0}',
+                    ])
+                .toList(),
           ),
         ],
       ),
@@ -333,12 +361,12 @@ class _HomeScreenState extends State<HomeScreen> {
             style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
           ),
           decoration: const pw.BoxDecoration(
-            border: pw.Border(bottom: pw.BorderSide(color: PdfColors.black, width: 1.0)),
+            border: pw.Border(
+                bottom: pw.BorderSide(color: PdfColors.black, width: 1.0)),
           ),
         ),
       ),
       pw.SizedBox(height: 16),
-
       pw.Text("Total Income ($currencySymbol): ${(_income.toString())}"),
       pw.Text("Total Expenses ($currencySymbol): ${_expense.toString()}"),
       pw.TableHelper.fromTextArray(
@@ -349,18 +377,20 @@ class _HomeScreenState extends State<HomeScreen> {
         cellAlignments: {0: pw.Alignment.centerLeft},
         cellPadding: const pw.EdgeInsets.all(5),
         headers: ['Date', 'Category', 'Amount ($currencySymbol)', 'Type'],
-        data: _payments.map((payment) => [
-          dateFormat.format(payment.datetime).replaceFirst('AM', 'am').replaceFirst('PM', 'pm'),
-          payment.category.name,
-          payment.amount.toString(),
-          payment.type == PaymentType.credit ? 'CR' : 'DR',
-        ]).toList(),
+        data: _payments
+            .map((payment) => [
+                  dateFormat
+                      .format(payment.datetime)
+                      .replaceFirst('AM', 'am')
+                      .replaceFirst('PM', 'pm'),
+                  payment.category.name,
+                  payment.amount.toString(),
+                  payment.type == PaymentType.credit ? 'CR' : 'DR',
+                ])
+            .toList(),
       ),
     ];
   }
-
-
-
 
   @override
   void initState() {
@@ -512,10 +542,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   CurrencyText(
                                     _income,
                                     style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700,
-                                        color: ThemeColors.success,
-                                        ),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: ThemeColors.success,
+                                    ),
                                   )
                                 ],
                               ),
@@ -549,10 +579,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   CurrencyText(
                                     _expense,
                                     style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w700,
-                                        color: ThemeColors.error,
-                                        ),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: ThemeColors.error,
+                                    ),
                                   )
                                 ],
                               ),
@@ -572,7 +602,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                       SizedBox(
-                        height: 400, // Adjust as needed
+                        height: 600, // Adjust as needed
                         child: TabBarView(
                           children: [
                             ListView.separated(
@@ -603,30 +633,73 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: PieChart(
-                                PieChartData(
-                                  pieTouchData: PieTouchData(
-                                    touchCallback:
-                                        (FlTouchEvent event, pieTouchResponse) {
-                                      setState(() {
-                                        if (!event
-                                                .isInterestedForInteractions ||
-                                            pieTouchResponse == null ||
-                                            pieTouchResponse.touchedSection ==
-                                                null) {
-                                          touchedIndex = -1;
-                                          return;
-                                        }
-                                        touchedIndex = pieTouchResponse
-                                            .touchedSection!
-                                            .touchedSectionIndex;
-                                      });
-                                    },
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 300, // Adjust as needed
+                                    child: Card(
+                                      elevation: 3,
+                                      // color: Colors.orangeAccent.withOpacity(0.5),
+                                      child: PieChart(
+                                        PieChartData(
+                                          pieTouchData: PieTouchData(
+                                            touchCallback: (FlTouchEvent event,
+                                                pieTouchResponse) {
+                                              setState(() {
+                                                if (!event
+                                                        .isInterestedForInteractions ||
+                                                    pieTouchResponse == null ||
+                                                    pieTouchResponse
+                                                            .touchedSection ==
+                                                        null) {
+                                                  touchedIndex = -1;
+                                                  return;
+                                                }
+                                                touchedIndex = pieTouchResponse
+                                                    .touchedSection!
+                                                    .touchedSectionIndex;
+                                              });
+                                            },
+                                          ),
+                                          centerSpaceRadius: 40,
+                                          sections: _buildChartSections(),
+                                          borderData: FlBorderData(show: false),
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                  centerSpaceRadius: 40,
-                                  sections: _buildChartSections(),
-                                  borderData: FlBorderData(show: false),
-                                ),
+                                  Expanded(
+                                    child: ListView.separated(
+                                      separatorBuilder:
+                                          (BuildContext context, int index) {
+                                        return Container(
+                                          width: double.infinity,
+                                          color: Colors.grey.withAlpha(25),
+                                          height: 1,
+                                          margin: const EdgeInsets.only(
+                                              left: 75, right: 20),
+                                        );
+                                      },
+                                      itemCount: _categoryExpenses.length,
+                                      itemBuilder: (context, index) {
+                                        final categoryName = _categoryExpenses.keys.elementAt(index);
+                                        final categoryExpense = _categoryExpenses[categoryName]!;
+                                        return ListTile(
+
+                                          title: Text(categoryName),
+                                          subtitle: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+
+                                              Text('${categoryExpense.count}'),
+                                              Text('${categoryExpense.amount.toStringAsFixed(2)}'),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -661,7 +734,8 @@ class _HomeScreenState extends State<HomeScreen> {
           _generatePDF(
               Provider.of<AppProvider>(context, listen: false).username ??
                   "Guest",
-              _range, Provider.of<AppProvider>(context, listen: false).currency!);
+              _range,
+              Provider.of<AppProvider>(context, listen: false).currency!);
         },
         child: const Icon(Icons.picture_as_pdf),
       ),
@@ -669,8 +743,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<PieChartSectionData> _buildChartSections() {
-    Map<String, CategoryExpense> categoryExpenses = {};  // Use category name as the key and a custom class to store amount and count
+    Map<String, CategoryExpense> categoryExpenses = {}; // Use category name as the key and a custom class to store amount and count
     Map<String, Category> categoryDetails = {}; // Store category details
+
+    double totalExpense = 0; // Total expense for percentage calculation
 
     for (var payment in _payments) {
       if (payment.type == PaymentType.debit) {
@@ -682,6 +758,7 @@ class _HomeScreenState extends State<HomeScreen> {
           categoryExpenses[category.name] = CategoryExpense(payment.amount, 1);
         }
         categoryDetails[category.name] = category; // Store the category details
+        totalExpense += payment.amount; // Sum total expense
       }
     }
 
@@ -693,19 +770,19 @@ class _HomeScreenState extends State<HomeScreen> {
       final category = categoryDetails[categoryName]; // Retrieve category details
       final isTouched = i == touchedIndex;
       final radius = isTouched ? 60.0 : 50.0;
+      final percentage = (categoryExpense.amount / totalExpense) * 100;
 
       if (category != null) {
         sections.add(
           PieChartSectionData(
             titlePositionPercentageOffset: 1,
             value: categoryExpense.amount,
-            title: '$categoryName (${categoryExpense.count})',  // Include the count in the title
+            title: '$categoryName (${percentage.toStringAsFixed(1)}%)', // Include the percentage in the title
             color: category.color,
             radius: radius,
             titleStyle: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-
             ),
           ),
         );
@@ -713,16 +790,19 @@ class _HomeScreenState extends State<HomeScreen> {
       i++;
     }
 
+    // Update the state with category expenses
+    setState(() {
+      _categoryExpenses = categoryExpenses;
+    });
+
     return sections;
   }
 
-
-
 }
+
 class CategoryExpense {
   double amount;
   int count;
 
   CategoryExpense(this.amount, this.count);
 }
-
