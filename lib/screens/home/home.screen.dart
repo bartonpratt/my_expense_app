@@ -8,6 +8,7 @@ import 'package:penniverse/model/category.model.dart';
 import 'package:penniverse/model/payment.model.dart';
 import 'package:penniverse/providers/app_provider.dart';
 import 'package:penniverse/screens/home/widgets/account_slider.dart';
+import 'package:penniverse/screens/home/widgets/expense_chart.dart';
 import 'package:penniverse/screens/home/widgets/payment_list_item.dart';
 import 'package:penniverse/screens/home/widgets/pdf_generator.dart';
 import 'package:penniverse/screens/payments/payment_form.screen.dart';
@@ -17,7 +18,6 @@ import 'package:penniverse/widgets/currency.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 String greeting() {
   var hour = DateTime.now().hour;
@@ -34,8 +34,9 @@ class CategoryExpense {
   double amount;
   int count;
   Color color;
+  IconData icon;
 
-  CategoryExpense(this.amount, this.count, this.color);
+  CategoryExpense(this.amount, this.count, this.color, this.icon);
 }
 
 class HomeScreen extends StatefulWidget {
@@ -63,7 +64,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Category? _category;
   late String _currencySymbol;
 
-  Map<String, CategoryExpense> _categoryExpenses = {};
 
   void handleChooseDateRange() async {
     final selected = await showDateRangePicker(
@@ -444,7 +444,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const TabBar(
                         tabs: [
                           Tab(text: "Payments"),
-                          Tab(text: "Expense Chart"),
+                          Tab(text: "Expense Stats"),
                         ],
                       ),
                       SizedBox(
@@ -477,123 +477,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                               itemCount: _payments.length,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 300, // Adjust as needed
-                                    child: Card(
-                                      elevation: 3,
-                                      // color: Colors.orangeAccent.withOpacity(0.5),
-                                      child: PieChart(
-                                        PieChartData(
-                                          pieTouchData: PieTouchData(
-                                            touchCallback: (FlTouchEvent event,
-                                                pieTouchResponse) {
-                                              setState(() {
-                                                if (!event
-                                                        .isInterestedForInteractions ||
-                                                    pieTouchResponse == null ||
-                                                    pieTouchResponse
-                                                            .touchedSection ==
-                                                        null) {
-                                                  touchedIndex = -1;
-                                                  return;
-                                                }
-                                                touchedIndex = pieTouchResponse
-                                                    .touchedSection!
-                                                    .touchedSectionIndex;
-                                              });
-                                            },
-                                          ),
-                                          centerSpaceRadius: 40,
-                                          sections: _buildChartSections(),
-                                          borderData: FlBorderData(show: false),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: ListView.separated(
-                                      separatorBuilder:
-                                          (BuildContext context, int index) {
-                                        return Container(
-                                          width: double.infinity,
-                                          color: Colors.grey.withAlpha(25),
-                                          height: 1,
-                                          margin: const EdgeInsets.only(
-                                              left: 75, right: 20),
-                                        );
-                                      },
-                                      itemCount: _categoryExpenses.length,
-                                      itemBuilder: (context, index) {
-                                        final categoryName = _categoryExpenses
-                                            .keys
-                                            .elementAt(index);
-                                        final categoryExpense =
-                                            _categoryExpenses[categoryName]!;
-                                        final totalExpense =
-                                            _categoryExpenses.values.fold(
-                                                0.0,
-                                                (sum, item) =>
-                                                    sum + item.amount);
-                                        final percentage =
-                                            (categoryExpense.amount /
-                                                    totalExpense) *
-                                                100;
-
-                                        return ListTile(
-                                          title: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    padding:
-                                                        const EdgeInsets.all(6),
-                                                    decoration: BoxDecoration(
-                                                      color: categoryExpense
-                                                          .color, // Choose a color for the container
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                    ),
-                                                    child: Text(
-                                                      '${percentage.toStringAsFixed(1)}%',
-                                                      style: const TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 8),
-                                                  Text(categoryName),
-                                                ],
-                                              ),
-                                              Text('${categoryExpense.count}'),
-                                              Text(
-                                                _currencySymbol,
-                                                style: const TextStyle(
-                                                    fontSize: 14),
-                                              ),
-                                            ],
-                                          ),
-                                          subtitle: Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              Text(categoryExpense.amount
-                                                  .toStringAsFixed(2)),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
+                            SizedBox(
+                             // Adjust as needed
+                              child: ExpensePieChart(
+                                payments: _payments,
+                                paymentType: PaymentType.debit,
                               ),
                             ),
                           ],
@@ -632,63 +520,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  List<PieChartSectionData> _buildChartSections() {
-    Map<String, CategoryExpense> categoryExpenses =
-        {}; // Use category name as the key and a custom class to store amount and count
-    Map<String, Category> categoryDetails = {}; // Store category details
-
-    double totalExpense = 0; // Total expense for percentage calculation
-
-    for (var payment in _payments) {
-      if (payment.type == PaymentType.debit) {
-        var category = payment.category;
-        if (categoryExpenses.containsKey(category.name)) {
-          categoryExpenses[category.name]!.amount += payment.amount;
-          categoryExpenses[category.name]!.count += 1;
-        } else {
-          categoryExpenses[category.name] =
-              CategoryExpense(payment.amount, 1, category.color);
-        }
-        categoryDetails[category.name] = category; // Store the category details
-        totalExpense += payment.amount; // Sum total expense
-      }
-    }
-
-    List<PieChartSectionData> sections = [];
-    int i = 0;
-    for (var entry in categoryExpenses.entries) {
-      final categoryName = entry.key;
-      final categoryExpense = entry.value;
-      final category =
-          categoryDetails[categoryName]; // Retrieve category details
-      final isTouched = i == touchedIndex;
-      final radius = isTouched ? 60.0 : 50.0;
-      final percentage = (categoryExpense.amount / totalExpense) * 100;
-
-      if (category != null) {
-        sections.add(
-          PieChartSectionData(
-            titlePositionPercentageOffset: 1,
-            value: categoryExpense.amount,
-            title:
-                '$categoryName (${percentage.toStringAsFixed(1)}%)', // Include the percentage in the title
-            color: category.color,
-            radius: radius,
-            titleStyle: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        );
-      }
-      i++;
-    }
-
-    // Update the state with category expenses
-    setState(() {
-      _categoryExpenses = categoryExpenses;
-    });
-
-    return sections;
-  }
 }
+
+
