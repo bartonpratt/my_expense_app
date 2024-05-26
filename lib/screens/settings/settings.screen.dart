@@ -256,7 +256,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _launchURL() async {
     final Uri params = Uri(
       scheme: 'mailto',
-      path: 'delbarton2@gmail.com',
+      path: 'bartonpratt@gmail.com',
     );
     String url = params.toString();
     if (await canLaunch(url)) {
