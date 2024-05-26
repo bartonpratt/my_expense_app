@@ -20,27 +20,38 @@ class _IntroState extends State<Intro> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Flexible(
-              flex: 8,
-              child: Center(
-                child: RiveAnimation.asset(
-                  'assets/rive/savings.riv',
+            flex: 5,
+            child: Center(
+              child: ClipOval(
+                child: SizedBox(
+                  width: 300.0, // Specify the desired width
+                  height: 300.0, // Specify the desired height
+                  child: RiveAnimation.asset(
+                    'assets/rive/savings.riv',
+                  ),
                 ),
-              )),
+              ),
+            ),
+          ),
           SizedBox(
             width: 250.0,
             child: DefaultTextStyle(
               style: const TextStyle(
-                  fontSize: 30.0, fontFamily: 'Bobbers', color: Colors.white),
+                fontSize: 30.0,
+                fontFamily: 'Bobbers',
+                color: Colors.white,
+              ),
               child: AnimatedTextKit(
                 animatedTexts: [
                   TyperAnimatedText('Control your spending,'),
                   TyperAnimatedText('Grow your savings,'),
                   TyperAnimatedText(
-                      "Living your dreams isn't enough—plan for them."),
+                    "Living your dreams isn't enough—plan for them.",
+                  ),
                   TyperAnimatedText('- JB Pratt'),
                 ],
                 isRepeatingAnimation: true,
@@ -53,7 +64,8 @@ class _IntroState extends State<Intro> {
             flex: 2,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                elevation: 4, backgroundColor: Colors.blue,
+                elevation: 4,
+                backgroundColor: Colors.blue,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),
                 ),
@@ -62,7 +74,7 @@ class _IntroState extends State<Intro> {
               child: const Text(
                 'Get Started',
                 style: TextStyle(color: Colors.black54),
-              ), // Accessing onGetStarted through widget
+              ),
             ),
           ),
         ],
@@ -70,3 +82,4 @@ class _IntroState extends State<Intro> {
     );
   }
 }
+

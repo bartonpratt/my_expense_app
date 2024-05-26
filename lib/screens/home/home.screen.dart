@@ -705,7 +705,7 @@ class _HomeScreenState extends State<HomeScreen> {
             titleStyle: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+
             ),
           ),
         );

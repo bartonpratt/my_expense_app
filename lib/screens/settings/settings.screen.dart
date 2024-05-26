@@ -5,9 +5,11 @@ import 'package:penniverse/providers/app_provider.dart';
 import 'package:penniverse/widgets/buttons/button.dart';
 import 'package:penniverse/widgets/dialog/confirm.modal.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  const SettingsScreen({Key? key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -28,65 +30,127 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                ListTile(
-                  title: const Text(
-                    "Currency",
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-                  ),
-                  visualDensity: const VisualDensity(vertical: -2),
-                  subtitle: Selector<AppProvider, String?>(
-                    selector: (_, provider) => provider.currency,
-                    builder: (context, state, _) {
-                      Currency? currency = CurrencyService().findByCode(state);
-                      return Text(
-                        currency?.name ?? "",
-                        style: Theme.of(context).textTheme.bodySmall,
-                      );
-                    },
-                  ),
-                  onTap: () {
-                    showCurrencyPicker(
-                      context: context,
-                      onSelect: (Currency currency) {
-                        provider.updateCurrency(currency.code);
-                      },
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text(
-                    "Name",
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-                  ),
-                  visualDensity: const VisualDensity(vertical: -2),
-                  subtitle: Selector<AppProvider, String?>(
-                    selector: (_, provider) => provider.username,
-                    builder: (context, state, _) {
-                      return Text(
-                        state ?? "",
-                        style: Theme.of(context).textTheme.bodySmall,
-                      );
-                    },
-                  ),
-                  onTap: () => _showEditProfileDialog(context, provider),
-                ),
-                ListTile(
-                  title: const Text(
-                    "Reset",
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-                  ),
-                  visualDensity: const VisualDensity(vertical: -2),
-                  subtitle: Text(
-                    "Delete all the data",
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  onTap: () => _showResetConfirmDialog(context, provider),
-                ),
+                _buildCurrencyTile(provider, context),
+                const Divider(),
+                _buildNameTile(provider, context),
+                const Divider(),
+                _buildResetTile(provider, context),
+                const Divider(),
+                _buildAboutUsTile(context),
+                const Divider(),
+                _buildFeedbackTile(context),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  ListTile _buildCurrencyTile(AppProvider provider, BuildContext context) {
+    return ListTile(
+      title: const Text(
+        "Currency",
+        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+      ),
+      visualDensity: const VisualDensity(vertical: -2),
+      subtitle: Selector<AppProvider, String?>(
+        selector: (_, provider) => provider.currency,
+        builder: (context, state, _) {
+          Currency? currency = CurrencyService().findByCode(state);
+          return Text(
+            currency?.name ?? "",
+            style: Theme.of(context).textTheme.bodySmall,
+          );
+        },
+      ),
+      onTap: () {
+        showCurrencyPicker(
+          context: context,
+          onSelect: (Currency currency) {
+            provider.updateCurrency(currency.code);
+          },
+        );
+      },
+    );
+  }
+
+  ListTile _buildNameTile(AppProvider provider, BuildContext context) {
+    return ListTile(
+      title: const Text(
+        "Name",
+        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+      ),
+      visualDensity: const VisualDensity(vertical: -2),
+      subtitle: Selector<AppProvider, String?>(
+        selector: (_, provider) => provider.username,
+        builder: (context, state, _) {
+          return Text(
+            state ?? "",
+            style: Theme.of(context).textTheme.bodySmall,
+          );
+        },
+      ),
+      onTap: () => _showEditProfileDialog(context, provider),
+    );
+  }
+
+  ListTile _buildResetTile(AppProvider provider, BuildContext context) {
+    return ListTile(
+      title: const Text(
+        "Reset",
+        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+      ),
+      visualDensity: const VisualDensity(vertical: -2),
+      subtitle: Text(
+        "Delete all the data",
+        style: Theme.of(context).textTheme.bodySmall,
+      ),
+      onTap: () => _showResetConfirmDialog(context, provider),
+    );
+  }
+
+  ListTile _buildAboutUsTile(BuildContext context) {
+    return ListTile(
+      title: const Text(
+        "About Us",
+        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+      ),
+      visualDensity: const VisualDensity(vertical: -2),
+      onTap: () {
+        showAboutDialog(
+          context: context,
+          applicationName: 'Penniverse',
+          applicationVersion: '1.0.0',
+          applicationIcon: SizedBox(
+            height: 50,
+            width: 50,
+            child: Image.asset('assets/logo/penniverse_logo.png'),
+          ),
+          applicationLegalese: '© 2024 Thrive Nexa Tech',
+          children: [
+            const Text(
+              'Penniverse is a finance management app designed to help you organize your expenses, track your budgets, and manage your accounts with ease.',
+              softWrap: true,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  ListTile _buildFeedbackTile(BuildContext context) {
+    return ListTile(
+      title: const Text(
+        "Feedback",
+        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+      ),
+      visualDensity: const VisualDensity(vertical: -2),
+      subtitle: Text(
+        "We'll be glad to hear from you!",
+        style: Theme.of(context).textTheme.bodySmall,
+      ),
+      onTap: () => _showFeedbackOptions(context),
     );
   }
 
@@ -111,14 +175,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 TextFormField(
                   controller: controller,
-                  decoration: InputDecoration(
-                    label: const Text("What should we call you?"),
+                  decoration: const InputDecoration(
+                    labelText: "What should we call you?",
                     hintText: "Enter your name",
-                    filled: true,
-                    border: UnderlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                   ),
                 ),
               ],
@@ -132,7 +191,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onPressed: () {
                       if (controller.text.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Please enter name")));
+                          const SnackBar(content: Text("Please enter name")),
+                        );
                       } else {
                         provider.updateUsername(controller.text);
                         Navigator.of(context).pop();
@@ -164,4 +224,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
     );
   }
+
+  void _showFeedbackOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              title: const Text('Send Feedback'),
+              onTap: () {
+                _launchURL();
+                Navigator.pop(context);
+              },
+            ),
+            const Divider(),
+            ListTile(
+              title: const Text('Report Bug'),
+              onTap: () {
+                _launchURL();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _launchURL() async {
+    final Uri params = Uri(
+      scheme: 'mailto',
+      path: 'delbarton2@gmail.com',
+    );
+    String url = params.toString();
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Could not launch email app")),
+      );
+      debugPrint('Could not launch $url');
+    }
+  }
 }
+

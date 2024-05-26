@@ -4,6 +4,7 @@ import 'package:penniverse/data/icons.dart';
 import 'package:penniverse/events.dart';
 import 'package:penniverse/extension.dart';
 import 'package:penniverse/model/category.model.dart';
+import 'package:penniverse/theme/colors.dart';
 import 'package:penniverse/widgets/buttons/button.dart';
 import 'package:penniverse/widgets/currency.dart';
 import 'package:flutter/material.dart';
@@ -99,7 +100,7 @@ class _CategoryForm extends State<CategoryForm> {
                   decoration: InputDecoration(
                       labelText: 'Name',
                       hintText: 'Enter Category name',
-                      filled: true,
+                      filled: true,fillColor: _category.color.withOpacity(0.2),
                       border: UnderlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -125,7 +126,7 @@ class _CategoryForm extends State<CategoryForm> {
                 decoration: InputDecoration(
                   labelText: 'Budget',
                   hintText: 'Enter budget',
-                  filled: true,
+                  filled: true,fillColor: _category.color.withOpacity(0.2),
                   border: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -150,7 +151,7 @@ class _CategoryForm extends State<CategoryForm> {
             ),
 
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text('Select Type'),
                 CoolDropdown<String>(

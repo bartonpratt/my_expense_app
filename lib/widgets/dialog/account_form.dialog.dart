@@ -103,7 +103,7 @@ class _AccountForm extends State<AccountForm> {
                     decoration: InputDecoration(
                       labelText: 'Name',
                       hintText: 'Account name',
-                      filled: true,
+                      filled: true,fillColor:  _account?.color.withOpacity(0.2),
                       border: UnderlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -127,7 +127,7 @@ class _AccountForm extends State<AccountForm> {
                 decoration: InputDecoration(
                   labelText: 'Holder name',
                   hintText: 'Enter account holder name',
-                  filled: true,
+                  filled: true,fillColor:  _account?.color.withOpacity(0.2),
                   border: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -150,7 +150,7 @@ class _AccountForm extends State<AccountForm> {
                 decoration: InputDecoration(
                   labelText: 'A/C Number',
                   hintText: 'Enter account number',
-                  filled: true,
+                  filled: true,fillColor:  _account?.color.withOpacity(0.2),
                   border: UnderlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -167,7 +167,7 @@ class _AccountForm extends State<AccountForm> {
                 },
               ),
             ),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text("Pick Color"),
                 GestureDetector(

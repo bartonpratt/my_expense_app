@@ -50,7 +50,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
             ),
           ),
           Positioned(
-            top: 100,
+            top: 90,
             left: 0,
             right: 0,
             child: Center(
@@ -82,7 +82,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                       Text(
                         "Heyy! \nWelcome to Penniverse",
                         style: theme.textTheme.headlineMedium!.apply(
-                            color: theme.primaryColor, fontWeightDelta: 2),
+                            color: Colors.blue, fontWeightDelta: 2),
                       ),
                       const SizedBox(height: 15),
                       Text(
