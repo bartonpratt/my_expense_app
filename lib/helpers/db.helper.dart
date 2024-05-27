@@ -14,7 +14,7 @@ Future<Database> getDBInstance() async {
     sqfliteFfiInit();
     var databaseFactory = databaseFactoryFfi;
     db = await databaseFactory.openDatabase(
-      "myexpense.db",
+      "penniverse.db",
       options: OpenDatabaseOptions(
         version: 1,
         onCreate: onCreate,

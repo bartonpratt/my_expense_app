@@ -148,7 +148,7 @@ class ThemeColors {
       fontFamilyFallback: ['Roboto'],
       primaryColor: primaryColor,
       colorScheme: const ColorScheme.dark(
-        primaryContainer: Color(0xffee002c),
+        primaryContainer: Colors.blue,
         onPrimary: Colors.green,
         onPrimaryContainer: Colors.white,
         inversePrimary: Colors.blue,

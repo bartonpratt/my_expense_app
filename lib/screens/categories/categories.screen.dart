@@ -60,7 +60,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           return Slidable(
             key: Key(category.id.toString()),
             direction: Axis.horizontal,
-            endActionPane: ActionPane(
+            endActionPane: ActionPane(extentRatio: 0.25,
               motion: const ScrollMotion(),
               children: [
                 SlidableAction(
