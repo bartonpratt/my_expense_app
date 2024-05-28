@@ -60,7 +60,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           return Slidable(
             key: Key(category.id.toString()),
             direction: Axis.horizontal,
-            endActionPane: ActionPane(extentRatio: 0.25,
+            endActionPane: ActionPane(
+              extentRatio: 0.25,
               motion: const ScrollMotion(),
               children: [
                 SlidableAction(
@@ -100,7 +101,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     .bodyMedium
                     ?.merge(const TextStyle(fontWeight: FontWeight.w500, fontSize: 15)),
               ),
-              subtitle: expenseProgress.isFinite
+              subtitle: category.budget != null && category.budget! > 0
                   ? ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: LinearProgressIndicator(
@@ -115,6 +116,29 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
+              trailing: category.budget != null && category.budget! > 0
+                  ? SizedBox(
+                width: 50,
+                height: 50,
+                child: Stack(
+                  children: [
+                    Center(
+                      child: CircularProgressIndicator(
+                        value: expenseProgress.isFinite ? expenseProgress : 0,
+                        backgroundColor: Colors.grey.shade200,
+                        color: category.color,
+                      ),
+                    ),
+                    Center(
+                      child: Text(
+                        '${(expenseProgress * 100).toStringAsFixed(0)}%',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+                  : null,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
             ),
           );

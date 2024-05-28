@@ -2,9 +2,7 @@ import 'package:cool_dropdown/cool_dropdown.dart';
 import 'package:penniverse/dao/category_dao.dart';
 import 'package:penniverse/data/icons.dart';
 import 'package:penniverse/events.dart';
-import 'package:penniverse/extension.dart';
 import 'package:penniverse/model/category.model.dart';
-import 'package:penniverse/theme/colors.dart';
 import 'package:penniverse/widgets/buttons/button.dart';
 import 'package:penniverse/widgets/currency.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +24,7 @@ class CategoryForm extends StatefulWidget {
 
 class _CategoryForm extends State<CategoryForm> {
   final CategoryDao _categoryDao = CategoryDao();
+
   final TextEditingController _nameController = TextEditingController();
   Category _category = Category(
     name: "",
@@ -43,6 +42,7 @@ class _CategoryForm extends State<CategoryForm> {
       _category = widget.category ??
           Category(name: "", icon: Icons.wallet_outlined, color: Colors.pink);
     }
+
     _type = _category.type == "DR" ? "Expense" : "Income";
   }
 
