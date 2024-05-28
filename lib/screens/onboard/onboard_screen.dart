@@ -1,6 +1,4 @@
-import 'package:penniverse/screens/onboard/widgets/intro.dart';
-import 'package:penniverse/screens/onboard/widgets/profile.dart';
-import 'package:flutter/material.dart';
+import 'package:penniverse/exports.dart';
 
 
 class OnboardScreen extends StatelessWidget {

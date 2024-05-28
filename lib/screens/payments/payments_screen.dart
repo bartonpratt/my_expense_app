@@ -1,10 +1,4 @@
-import 'package:events_emitter/events_emitter.dart';
-import 'package:penniverse/dao/payment_dao.dart';
-import 'package:penniverse/events.dart';
-import 'package:penniverse/model/payment.model.dart';
-import 'package:penniverse/screens/home/widgets/payment_list_item.dart';
-import 'package:flutter/material.dart';
-import 'package:penniverse/screens/payments/payment_form.screen.dart';
+import 'package:penniverse/exports.dart';
 
 class PaymentsScreen extends StatefulWidget {
   const PaymentsScreen({super.key});

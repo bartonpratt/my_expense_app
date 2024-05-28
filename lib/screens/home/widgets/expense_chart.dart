@@ -1,12 +1,4 @@
-import 'package:events_emitter/events_emitter.dart';
-import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:penniverse/model/category.model.dart';
-import 'package:penniverse/model/payment.model.dart';
-import 'package:provider/provider.dart';
-import 'package:penniverse/providers/app_provider.dart';
-
-import '../../../events.dart'; // Adjust the import according to your project structure
+import 'package:penniverse/exports.dart';
 
 class ExpensePieChart extends StatefulWidget {
   final List<Payment> payments;

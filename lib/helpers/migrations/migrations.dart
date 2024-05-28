@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
+
 double safeDouble(dynamic value) {
   try {
     return double.parse(value.toString());

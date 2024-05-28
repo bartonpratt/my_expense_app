@@ -1,8 +1,5 @@
-// ignore_for_file: library_private_types_in_public_api
-
-import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:penniverse/exports.dart';
 
 class Intro extends StatefulWidget {
   final VoidCallback onGetStarted;

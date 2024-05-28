@@ -1,8 +1,4 @@
-import 'package:flutter/services.dart';
-import 'package:penniverse/screens/main.screen.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:penniverse/theme/colors.dart';
+import 'package:penniverse/exports.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

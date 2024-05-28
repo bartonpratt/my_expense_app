@@ -1,13 +1,7 @@
-import 'package:ficonsax/ficonsax.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:penniverse/providers/app_provider.dart';
-import 'package:penniverse/screens/accounts/accounts.screen.dart';
-import 'package:penniverse/screens/categories/categories.screen.dart';
-import 'package:penniverse/screens/onboard/onboard_screen.dart';
-import 'package:penniverse/screens/payments/payments_screen.dart';
-import 'home/home.screen.dart';
+import 'package:penniverse/exports.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:penniverse/screens/home/home.screen.dart';
+import 'package:penniverse/screens/settings/gen.settings.screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -24,21 +18,21 @@ class _MainScreenState extends State<MainScreen>
     IconsaxOutline.home,
     Icons.payment_outlined,
     IconsaxOutline.wallet,
-    IconsaxOutline.category,
+    IconsaxOutline.more,
   ];
 
   final List<IconData> selectedIconList = [
     IconsaxBold.home,
     Icons.payment,
     IconsaxBold.wallet_money,
-    IconsaxBold.category,
+    IconsaxBold.more,
   ];
 
   final List<String> navigationLabels = [
     "Home",
     "Payments",
     "Accounts",
-    "Categories",
+    "More",
   ];
 
   @override
@@ -55,7 +49,7 @@ class _MainScreenState extends State<MainScreen>
               HomeScreen(),
               PaymentsScreen(),
               AccountsScreen(),
-              CategoriesScreen(),
+              SettingsPage(),
             ],
           ),
           bottomNavigationBar: AnimatedBottomNavigationBar.builder(

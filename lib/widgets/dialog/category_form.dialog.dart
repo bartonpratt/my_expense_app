@@ -1,14 +1,5 @@
-import 'package:cool_dropdown/cool_dropdown.dart';
-import 'package:penniverse/dao/category_dao.dart';
-import 'package:penniverse/data/icons.dart';
-import 'package:penniverse/events.dart';
-import 'package:penniverse/model/category.model.dart';
-import 'package:penniverse/widgets/buttons/button.dart';
-import 'package:penniverse/widgets/currency.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:cool_dropdown/models/cool_dropdown_item.dart';
-import 'package:penniverse/helpers/color_picker.helper.dart';
+import 'package:penniverse/exports.dart';
+
 
 typedef Callback = void Function();
 
@@ -156,10 +147,13 @@ class _CategoryForm extends State<CategoryForm> {
                 const Text('Select Type'),
                 CoolDropdown<String>(
                   dropdownList: [
-                    CoolDropdownItem<String>(value: "Income", label: 'Income'),
-                    CoolDropdownItem<String>(
-                        label: "Expense", value: "Expense"),
+                    if (widget.category?.type == "CR")
+                      CoolDropdownItem<String>(value: "Income", label: 'Income'),
+                    if (widget.category?.type == "DR")
+                      CoolDropdownItem<String>(value: "Expense", label: 'Expense'),
+                    CoolDropdownItem<String>(value: "Income", label: 'Income (Default)'), // Default option
                   ],
+
                   defaultItem: CoolDropdownItem<String>(
                       value: "Income", label: 'Income'),
                   controller: DropdownController(),

@@ -1,11 +1,4 @@
-import 'package:currency_picker/currency_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:penniverse/helpers/db.helper.dart';
-import 'package:penniverse/providers/app_provider.dart';
-import 'package:penniverse/widgets/buttons/button.dart';
-import 'package:penniverse/widgets/dialog/confirm.modal.dart';
-import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:penniverse/exports.dart';
 
 
 class SettingsScreen extends StatefulWidget {
@@ -27,7 +20,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: Column(
         children: [
           Expanded(
-            child: ListView(
+            child:
+
+            ListView(
               padding: EdgeInsets.zero,
               children: [
                 _buildCurrencyTile(provider, context),
@@ -138,6 +133,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       },
     );
   }
+
 
   ListTile _buildFeedbackTile(BuildContext context) {
     return ListTile(

@@ -1,8 +1,6 @@
-import 'package:penniverse/app.dart';
-import 'package:penniverse/helpers/db.helper.dart';
-import 'package:penniverse/providers/app_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
+
+import 'package:penniverse/exports.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

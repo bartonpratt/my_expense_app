@@ -1,6 +1,5 @@
-import 'package:penniverse/theme/colors.dart';
-import 'package:penniverse/widgets/buttons/button.dart';
-import 'package:flutter/material.dart';
+import '../../exports.dart';
+
 
 class ConfirmModal extends StatelessWidget{
   final String title;

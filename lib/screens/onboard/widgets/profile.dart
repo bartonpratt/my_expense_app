@@ -1,12 +1,5 @@
 import 'dart:ui';
-
-import 'package:currency_picker/currency_picker.dart';
-import 'package:ficonsax/ficonsax.dart';
-import 'package:penniverse/helpers/db.helper.dart';
-import 'package:penniverse/providers/app_provider.dart';
-import 'package:penniverse/widgets/buttons/button.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:penniverse/exports.dart';
 
 class ProfileWidget extends StatefulWidget {
   const ProfileWidget({super.key});

@@ -1,8 +1,5 @@
-import 'package:penniverse/model/payment.model.dart';
-import 'package:penniverse/widgets/currency.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../theme/colors.dart';
+import 'package:penniverse/exports.dart';
 
 class PaymentListItem extends StatelessWidget{
   final Payment payment;

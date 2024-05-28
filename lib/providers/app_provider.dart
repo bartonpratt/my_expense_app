@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:penniverse/exports.dart';
+
 class AppProvider extends ChangeNotifier {
   String? _username;
   Color? _color;

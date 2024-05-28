@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:penniverse/exports.dart';
 
 class ThemeColors {
   static const MaterialColor success =

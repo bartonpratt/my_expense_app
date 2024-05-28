@@ -1,8 +1,5 @@
-import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:penniverse/helpers/migrations/migrations.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:penniverse/exports.dart';
 
 Database? database;
 
@@ -23,7 +20,7 @@ Future<Database> getDBInstance() async {
     );
   } else {
     String databasesPath = await getDatabasesPath();
-    String dbPath = join(databasesPath, 'myexpense.db');
+    String dbPath = join(databasesPath, 'penniverse.db');
     db = await openDatabase(
       dbPath,
       version: 1,

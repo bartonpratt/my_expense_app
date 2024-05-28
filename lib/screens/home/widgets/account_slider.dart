@@ -1,6 +1,4 @@
-import 'package:penniverse/model/account.model.dart';
-import 'package:penniverse/widgets/currency.dart';
-import 'package:flutter/material.dart';
+import 'package:penniverse/exports.dart';
 
 class AccountsSlider extends StatefulWidget{
   final List<Account> accounts;

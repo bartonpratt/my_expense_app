@@ -1,4 +1,5 @@
-import 'package:events_emitter/emitters/event_emitter.dart';
+import 'package:penniverse/exports.dart';
+
 enum GlobalEventTypes{
   paymentUpdate,
   categoryUpdate,

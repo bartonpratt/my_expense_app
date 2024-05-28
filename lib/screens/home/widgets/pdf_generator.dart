@@ -1,15 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 import 'package:intl/intl.dart';
-import 'package:penniverse/dao/account_dao.dart';
-import 'package:penniverse/dao/payment_dao.dart';
-import 'package:penniverse/model/account.model.dart';
-import 'package:penniverse/model/payment.model.dart';
-import 'package:penniverse/providers/app_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:penniverse/exports.dart';
 
 class PDFGenerator {
   final PaymentDao _paymentDao = PaymentDao();

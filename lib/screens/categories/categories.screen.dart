@@ -1,10 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:events_emitter/events_emitter.dart';
-import 'package:penniverse/dao/category_dao.dart';
-import 'package:penniverse/events.dart';
-import 'package:penniverse/model/category.model.dart';
 import 'package:penniverse/widgets/dialog/category_form.dialog.dart';
+import 'package:penniverse/exports.dart';
 
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
