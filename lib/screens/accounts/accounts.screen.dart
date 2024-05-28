@@ -97,7 +97,9 @@ class _AccountsScreenState extends State<AccountsScreen> {
                                   Text(account.name, style: Theme.of(context).textTheme.bodySmall,),
                                   Text(maskAccount(account.accountNumber), style: Theme.of(context).textTheme.bodySmall,),
                                 ],
-                              )
+                              ),
+                              const Expanded(child:SizedBox()),
+                              SizedBox(height:40, width:40,child: Image.asset('assets/images/mcard_icon.png'))
                             ],
                           ),
                           const SizedBox(height: 20,),
@@ -193,7 +195,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                                   ConfirmModal.showConfirmDialog(
                                       context,
                                       title: "Are you sure?",
-                                      content: const Text("All the paymentswill be deleted belongs to this account"),
+                                      content: const Text("All the payments will be deleted belongs to this account"),
                                       onConfirm: () async {
                                         Navigator.pop(context);
                                         await _accountDao.delete(account.id!);

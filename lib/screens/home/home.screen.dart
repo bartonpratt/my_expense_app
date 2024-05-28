@@ -222,11 +222,10 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     } catch (e) {
       debugPrint('Error fetching transactions: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to fetch transactions')),
-      );
+
     }
   }
+
 
   int maxItemsPerPage = 20; // Adjust this number based on your layout
 

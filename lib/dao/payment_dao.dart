@@ -11,8 +11,10 @@ import 'package:intl/intl.dart';
 class PaymentDao {
   Future<int> create(Payment payment) async {
     final db = await getDBInstance();
-    var result = db.insert("payments", payment.toJson());
-    return result;
+    return await db.transaction((txn) async {
+      var result = await txn.insert("payments", payment.toJson());
+      return result;
+    });
   }
 
   Future<List<Payment>> find({

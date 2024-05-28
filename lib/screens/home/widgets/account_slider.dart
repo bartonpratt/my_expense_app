@@ -46,14 +46,24 @@ class _AccountSlider extends State<AccountsSlider>{
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              CurrencyText(account.balance ?? 0, style: Theme.of(context).textTheme.headlineMedium?.merge(
-                                const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                ),
+                              Row(
+                                children: [
+                                  Column( crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      CurrencyText(account.balance ?? 0, style: Theme.of(context).textTheme.headlineMedium?.merge(
+                                        const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      ),
+                                      Text("Balance", style: Theme.of(context).textTheme.bodyMedium?.apply(color: Colors.white.withOpacity(0.9)),),
+                                    ],
+                                  ),
+                                  const Expanded(child:SizedBox()),
+                                  SizedBox(height:40, width:40,child: Image.asset('assets/images/mcard_icon.png'))
+                                ],
                               ),
-                              ),
-                              Text("Balance", style: Theme.of(context).textTheme.bodyMedium?.apply(color: Colors.white.withOpacity(0.9)),),
                               const Expanded(child: SizedBox()),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.end,
