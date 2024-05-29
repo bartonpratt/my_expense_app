@@ -1,0 +1,29 @@
+[33m36495af[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{0}: reset: moving to HEAD^
+[33mff8995f[m HEAD@{1}: commit: gen settings added
+[33m36495af[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{2}: commit: update budget indicator
+[33m0a2a9a0[m HEAD@{3}: commit: acc slider updated
+[33m98d3746[m HEAD@{4}: commit: card for payment list
+[33me063676[m HEAD@{5}: commit: created chart expense class
+[33mbd8ad0c[m HEAD@{6}: pull: Fast-forward
+[33mdaa0542[m HEAD@{7}: reset: moving to HEAD^
+[33m0daa2f6[m HEAD@{8}: reset: moving to HEAD^
+[33mbd8ad0c[m HEAD@{9}: commit: class for pdf generator & chart update
+[33m0daa2f6[m HEAD@{10}: commit: expense chart tab updated
+[33mdaa0542[m HEAD@{11}: commit: implement search payments
+[33mcb3ad45[m HEAD@{12}: commit: added signature to pdf
+[33mce088ce[m HEAD@{13}: commit: update flchart
+[33m4c906c3[m HEAD@{14}: commit: implement payment type filter
+[33me52b2b9[m HEAD@{15}: commit: ui updates
+[33mf1ff062[m HEAD@{16}: commit: currency handling
+[33m6a78d0e[m HEAD@{17}: commit: pdf generator & transaction filter
+[33mff9143c[m HEAD@{18}: commit: Rename Flutter project folder
+[33m8c57dd0[m HEAD@{19}: commit: added tabBar to homepage
+[33m858d3a3[m HEAD@{20}: commit: created color picker helper
+[33md1b0548[m HEAD@{21}: commit: color picker modified
+[33m685b19b[m HEAD@{22}: commit: cool dropdown for type added
+[33m19f5cdb[m HEAD@{23}: commit: category type added
+[33m2305138[m HEAD@{24}: commit: feature to choose category type
+[33m585026e[m HEAD@{25}: commit: added interaction to fl_chart
+[33m319d1a8[m HEAD@{26}: commit: added fl_chart
+[33m877dd0b[m HEAD@{27}: commit: added receipt field and functionality
+[33m44722c3[m HEAD@{28}: commit (initial): first commit
