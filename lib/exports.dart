@@ -53,6 +53,7 @@ export 'package:penniverse/screens/home/widgets/payment_list_item.dart';
 export 'package:penniverse/screens/home/widgets/pdf_generator.dart';
 export 'package:penniverse/screens/payments/payment_form.screen.dart';
 export 'package:penniverse/screens/settings/settings.screen.dart';
+export 'package:penniverse/screens/settings/privacy_policy.dart';
 export 'package:penniverse/widgets/dialog/account_form.dialog.dart';
 export 'package:penniverse/screens/onboard/widgets/profile.dart';
 export 'package:penniverse/screens/onboard/widgets/intro.dart';

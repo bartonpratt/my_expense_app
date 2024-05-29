@@ -102,10 +102,13 @@ class _SettingsPageState extends State<SettingsPage> {
                   selector: (_, provider) => provider.currency,
                   builder: (context, state, _) {
                     Currency? currency = CurrencyService().findByCode(state);
-                    return Text(
-                      currency?.symbol ?? "",
-                      style: const TextStyle(
-                          fontSize: 20), // Customize the font size as needed
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Text(
+                        currency?.symbol ?? "",
+                        style: const TextStyle(
+                            fontSize: 20), // Customize the font size as needed
+                      ),
                     );
                   },
                 ),
@@ -128,7 +131,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     );
                   },
                 ),
-                leading: const Icon(Icons.account_circle_outlined),
+                leading: const Icon(Icons.account_circle),
                 onPressed: (BuildContext context) {
                   _showEditProfileDialog(context, provider);
                 },
@@ -163,12 +166,12 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               SettingsTile(
                 title: const Text('Privacy Policy'),
-                leading: const Icon(Icons.privacy_tip_outlined),
+                leading: const Icon(Icons.privacy_tip),
                 onPressed: (BuildContext context) {
-                  // Navigator.push(
-                  // context,
-                  // MaterialPageRoute(
-                  //     builder: (context) => const PrivacyPolicy()));
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PrivacyPolicyPage()));
                 },
               ),
               SettingsTile(
