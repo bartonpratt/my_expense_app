@@ -58,3 +58,11 @@ export 'package:penniverse/widgets/dialog/account_form.dialog.dart';
 export 'package:penniverse/screens/onboard/widgets/profile.dart';
 export 'package:penniverse/screens/onboard/widgets/intro.dart';
 export 'package:penniverse/helpers/migrations/migrations.dart';
+export 'package:penniverse/chatbot_module/pennibot.dart';
+export 'package:penniverse/chatbot_module/models/chat_model.dart';
+export 'package:penniverse/chatbot_module/flutter_gemini_bot.dart';
+export 'package:penniverse/chatbot_module/components/cards/chat_item_card.dart';
+export 'package:penniverse/chatbot_module/services/gemini_ai_api.dart';
+export 'package:penniverse/chatbot_module/utils/constants.dart';
+export 'package:penniverse/chatbot_module/utils/helper_widgets.dart';
+

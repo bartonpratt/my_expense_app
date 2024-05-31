@@ -56,16 +56,12 @@ class _SettingsPageState extends State<SettingsPage> {
               tiles: [
                 SettingsTile(
                   title: const Text('Penni Bot AI'),
-                  leading: const Icon(IconsaxBold.text),
+                  leading: const Icon(Icons.reddit_rounded),
                   onPressed: (BuildContext context) {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return const Dialog(
-                          child: Text('Coming Soon...')
-                        );
-                      },
-                    );
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const PenniBot(title: 'Penni Bot AI')));
                   },
                 ),
           ]),
