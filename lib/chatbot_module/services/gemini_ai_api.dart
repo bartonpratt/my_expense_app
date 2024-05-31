@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';  // Import the dart:io package to handle SocketException
 import 'package:http/http.dart' as http;
 
 class GeminiApi {
@@ -33,11 +34,13 @@ class GeminiApi {
       if (response.statusCode == 200) {
         final decodedResponse = json.decode(response.body);
         final content = decodedResponse['candidates'][0]['content']['parts'][0]
-            ['text'] as String;
+        ['text'] as String;
         return (content, response);
       } else {
         return _handleErrorResponse(response);
       }
+    } on SocketException catch (e) {
+      return _handleSocketException(e);
     } on Exception catch (e) {
       return _handleException(e);
     }
@@ -54,7 +57,7 @@ class GeminiApi {
         break;
       case 403:
         errorMessage =
-            "Forbidden. You don't have permission to access this resource.";
+        "Forbidden. You don't have permission to access this resource.";
         break;
       case 404:
         errorMessage = "Not found. The requested resource could not be found.";
@@ -65,6 +68,11 @@ class GeminiApi {
         break;
     }
     return (errorMessage, response);
+  }
+
+  static (String, http.Response) _handleSocketException(SocketException exception) {
+    String errorMessage = "No internet connection. Please check your network settings.";
+    return (errorMessage, http.Response(errorMessage, 500));
   }
 
   static (String, http.Response) _handleException(Exception exception) {

@@ -40,17 +40,19 @@ class _AccountForm extends State<AccountForm> {
   }
 
   void onSave(BuildContext context) async {
+    try{
     await _accountDao.upsert(_account!);
     if (widget.onSave != null) {
       widget.onSave!();
     }
     Navigator.pop(context);
     globalEvent.emit("account_update");
+  } catch (e) {
+      debugPrint('Error saving data: $e');
+
+    }
   }
 
-  void pickIcon(BuildContext context) async {
-    // Implement icon picker logic here if needed
-  }
 
   @override
   Widget build(BuildContext context) {

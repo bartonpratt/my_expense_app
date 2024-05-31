@@ -15,10 +15,14 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   List<Category> _categories = [];
 
   void loadData() async {
-    List<Category> categories = await _categoryDao.find();
-    setState(() {
-      _categories = categories;
-    });
+    try {
+      List<Category> categories = await _categoryDao.find();
+      setState(() {
+        _categories = categories;
+      });
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
+    }
   }
 
   @override
@@ -51,7 +55,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         itemCount: _categories.length,
         itemBuilder: (builder, index) {
           Category category = _categories[index];
-          double expenseProgress = (category.expense ?? 0) / (category.budget ?? 0);
+          double expenseProgress =
+              (category.expense ?? 0) / (category.budget ?? 0);
 
           return Slidable(
             key: Key(category.id.toString()),
@@ -92,50 +97,51 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               title: Text(
                 category.name,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.merge(const TextStyle(fontWeight: FontWeight.w500, fontSize: 15)),
+                style: Theme.of(context).textTheme.bodyMedium?.merge(
+                    const TextStyle(fontWeight: FontWeight.w500, fontSize: 15)),
               ),
               subtitle: category.budget != null && category.budget! > 0
                   ? ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: LinearProgressIndicator(
-                  value: expenseProgress,
-                  semanticsLabel: expenseProgress.toString(),
-                ),
-              )
+                      borderRadius: BorderRadius.circular(8),
+                      child: LinearProgressIndicator(
+                        value: expenseProgress,
+                        semanticsLabel: expenseProgress.toString(),
+                      ),
+                    )
                   : Text(
-                "No budget",
-                style: Theme.of(context).textTheme.bodySmall?.apply(
-                  color: Colors.grey,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
+                      "No budget",
+                      style: Theme.of(context).textTheme.bodySmall?.apply(
+                            color: Colors.grey,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                    ),
               trailing: category.budget != null && category.budget! > 0
                   ? SizedBox(
-                width: 50,
-                height: 50,
-                child: Stack(
-                  children: [
-                    Center(
-                      child: CircularProgressIndicator(
-                        value: expenseProgress.isFinite ? expenseProgress : 0,
-                        backgroundColor: Colors.grey.shade200,
-                        color: category.color,
+                      width: 50,
+                      height: 50,
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: CircularProgressIndicator(
+                              value: expenseProgress.isFinite
+                                  ? expenseProgress
+                                  : 0,
+                              backgroundColor: Colors.grey.shade200,
+                              color: category.color,
+                            ),
+                          ),
+                          Center(
+                            child: Text(
+                              '${(expenseProgress * 100).toStringAsFixed(0)}%',
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    Center(
-                      child: Text(
-                        '${(expenseProgress * 100).toStringAsFixed(0)}%',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                  ],
-                ),
-              )
+                    )
                   : null,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25)),
             ),
           );
         },

@@ -49,44 +49,57 @@ class _PaymentForm extends State<PaymentForm> {
   }
 
   Future<void> loadCategories(PaymentType type) async {
-    String categoryType = type == PaymentType.credit ? 'CR' : 'DR';
-    List<Category> categories = await _categoryDao.findByType(categoryType);
-    setState(() {
-      _categories = categories;
-    });
+    try {
+      String categoryType = type == PaymentType.credit ? 'CR' : 'DR';
+      List<Category> categories = await _categoryDao.findByType(categoryType);
+      setState(() {
+        _categories = categories;
+      });
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
+    }
   }
+
   void populateState() async {
-    await loadAccounts();
-    await loadCategories(widget.type);
-    if (widget.payment != null) {
-      setState(() {
-        _id = widget.payment!.id;
-        _title = widget.payment!.title;
-        _description = widget.payment!.description;
-        _account = widget.payment!.account;
-        _category = widget.payment!.category;
-        _amount = widget.payment!.amount;
-        _type = widget.payment!.type;
-        _datetime = widget.payment!.datetime;
-        _receiptImage = widget.payment!.receipt; // Add receipt handling
-        _initialised = true;
-      });
-    } else {
-      setState(() {
-        _type = widget.type;
-        _initialised = true;
-      });
+    try {
+      await loadAccounts();
+      await loadCategories(widget.type);
+      if (widget.payment != null) {
+        setState(() {
+          _id = widget.payment!.id;
+          _title = widget.payment!.title;
+          _description = widget.payment!.description;
+          _account = widget.payment!.account;
+          _category = widget.payment!.category;
+          _amount = widget.payment!.amount;
+          _type = widget.payment!.type;
+          _datetime = widget.payment!.datetime;
+          _receiptImage = widget.payment!.receipt; // Add receipt handling
+          _initialised = true;
+        });
+      } else {
+        setState(() {
+          _type = widget.type;
+          _initialised = true;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
     }
   }
 
 // Method to handle image selection from gallery
   Future<void> _pickReceiptImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _receiptImage = File(pickedFile.path);
-      });
+    try {
+      final pickedFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _receiptImage = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
     }
   }
 
@@ -147,54 +160,66 @@ class _PaymentForm extends State<PaymentForm> {
   }
 
   Future<void> chooseDate(BuildContext context) async {
-    DateTime initialDate = _datetime;
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: initialDate,
-        firstDate: DateTime(2000),
-        lastDate: DateTime.now());
-    if (picked != null && initialDate != picked) {
-      setState(() {
-        _datetime = DateTime(picked.year, picked.month, picked.day,
-            initialDate.hour, initialDate.minute);
-      });
+    try {
+      DateTime initialDate = _datetime;
+      final DateTime? picked = await showDatePicker(
+          context: context,
+          initialDate: initialDate,
+          firstDate: DateTime(2000),
+          lastDate: DateTime.now());
+      if (picked != null && initialDate != picked) {
+        setState(() {
+          _datetime = DateTime(picked.year, picked.month, picked.day,
+              initialDate.hour, initialDate.minute);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
     }
   }
 
   Future<void> chooseTime(BuildContext context) async {
-    DateTime initialDate = _datetime;
-    TimeOfDay initialTime =
-        TimeOfDay(hour: initialDate.hour, minute: initialDate.minute);
-    final TimeOfDay? time = await showTimePicker(
-        context: context,
-        initialTime: initialTime,
-        initialEntryMode: TimePickerEntryMode.input);
-    if (time != null && initialTime != time) {
-      setState(() {
-        _datetime = DateTime(initialDate.year, initialDate.month,
-            initialDate.day, time.hour, time.minute);
-      });
+    try {
+      DateTime initialDate = _datetime;
+      TimeOfDay initialTime =
+          TimeOfDay(hour: initialDate.hour, minute: initialDate.minute);
+      final TimeOfDay? time = await showTimePicker(
+          context: context,
+          initialTime: initialTime,
+          initialEntryMode: TimePickerEntryMode.input);
+      if (time != null && initialTime != time) {
+        setState(() {
+          _datetime = DateTime(initialDate.year, initialDate.month,
+              initialDate.day, time.hour, time.minute);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
     }
   }
 
   void handleSaveTransaction(context) async {
-    Payment payment = Payment(
-      id: _id,
-      account: _account!,
-      category: _category!,
-      amount: _amount,
-      type: _type,
-      datetime: _datetime,
-      title: _title,
-      description: _description,
-      receipt: _receiptImage,
-    );
-    await _paymentDao.upsert(payment);
-    if (widget.onClose != null) {
-      widget.onClose!(payment);
+    try {
+      Payment payment = Payment(
+        id: _id,
+        account: _account!,
+        category: _category!,
+        amount: _amount,
+        type: _type,
+        datetime: _datetime,
+        title: _title,
+        description: _description,
+        receipt: _receiptImage,
+      );
+      await _paymentDao.upsert(payment);
+      if (widget.onClose != null) {
+        widget.onClose!(payment);
+      }
+      Navigator.of(context).pop();
+      globalEvent.emit("payment_update");
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
     }
-    Navigator.of(context).pop();
-    globalEvent.emit("payment_update");
   }
 
   @override
@@ -320,7 +345,8 @@ class _PaymentForm extends State<PaymentForm> {
                             label: const Text("Amount"),
                             prefixIcon: Padding(
                                 padding: const EdgeInsets.only(left: 15),
-                                child: CurrencyText(null,
+                                child: CurrencyText(
+                                  null,
                                 )),
                             prefixIconConstraints:
                                 const BoxConstraints(minWidth: 0, minHeight: 0),
@@ -567,7 +593,8 @@ class _PaymentForm extends State<PaymentForm> {
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.only(bottom: 25, left: 15, right: 15),
+                    margin:
+                        const EdgeInsets.only(bottom: 25, left: 15, right: 15),
                     width: double.infinity,
                     child: Wrap(
                       spacing: 10,
@@ -580,8 +607,12 @@ class _PaymentForm extends State<PaymentForm> {
                             ),
                             child: IntrinsicWidth(
                               child: MaterialButton(
-                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(0.1),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(100),
                                   side: const BorderSide(
@@ -589,7 +620,8 @@ class _PaymentForm extends State<PaymentForm> {
                                     color: Colors.transparent,
                                   ),
                                 ),
-                                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15, vertical: 0),
                                 elevation: 0,
                                 focusElevation: 0,
                                 hoverElevation: 0,
@@ -607,12 +639,16 @@ class _PaymentForm extends State<PaymentForm> {
                                     children: [
                                       Icon(
                                         Icons.add,
-                                        color: Theme.of(context).colorScheme.primary,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
                                       ),
                                       const SizedBox(width: 10),
                                       Text(
                                         "New Category",
-                                        style: Theme.of(context).textTheme.bodyMedium,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
                                       ),
                                     ],
                                   ),
@@ -628,7 +664,10 @@ class _PaymentForm extends State<PaymentForm> {
                           ),
                           child: IntrinsicWidth(
                             child: MaterialButton(
-                              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(0.1),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(100),
                                 side: BorderSide(
@@ -638,13 +677,15 @@ class _PaymentForm extends State<PaymentForm> {
                                       : Colors.transparent,
                                 ),
                               ),
-                              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 0),
                               elevation: 0,
                               focusElevation: 0,
                               hoverElevation: 0,
                               highlightElevation: 0,
                               disabledElevation: 0,
-                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
                               onPressed: () {
                                 setState(() {
                                   _category = category;
@@ -653,7 +694,8 @@ class _PaymentForm extends State<PaymentForm> {
                               onLongPress: () {
                                 showDialog(
                                   context: context,
-                                  builder: (builder) => CategoryForm(category: category),
+                                  builder: (builder) =>
+                                      CategoryForm(category: category),
                                 );
                               },
                               child: SizedBox(
@@ -664,7 +706,9 @@ class _PaymentForm extends State<PaymentForm> {
                                     const SizedBox(width: 10),
                                     Text(
                                       category.name,
-                                      style: Theme.of(context).textTheme.bodyMedium,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ],

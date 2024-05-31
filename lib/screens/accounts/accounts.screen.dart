@@ -25,10 +25,14 @@ class _AccountsScreenState extends State<AccountsScreen> {
 
 
   void loadData() async {
+    try{
     List<Account> accounts = await _accountDao.find(withSummary: true);
     setState(() {
       _accounts = accounts;
     });
+  } catch (e) {
+      debugPrint('Error fetching data: $e');
+    }
   }
 
 

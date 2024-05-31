@@ -56,6 +56,7 @@ class PDFGenerator {
   }
 
   Future<void> _fetchData(DateTimeRange dateRange) async {
+    try{
     _payments = await _paymentDao.find(range: dateRange);
     _accounts = await _accountDao.find(withSummary: true);
     _income = _payments
@@ -66,6 +67,10 @@ class PDFGenerator {
         .fold(0, (sum, payment) => sum + payment.amount);
     _currencySymbol =
     Provider.of<AppProvider>(_context, listen: false).currency!;
+  }catch (e) {
+      debugPrint('Error fetching date range: $e');
+
+    }
   }
 
   pw.Widget _buildPdfHeader(pw.MemoryImage logo) {
